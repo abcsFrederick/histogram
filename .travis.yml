@@ -105,8 +105,8 @@ install:
 
     - pip install -U --upgrade-strategy eager .[memcached,openslide]
     - python setup.py install
-    - cd $main_path
-    - pip install -e .
+    # - cd $main_path
+    # - pip install -e .
     - cd $girder_path
     - npm-install-retry
     - BABEL_ENV=cover NYC_CWD="$main_path" girder-install web --plugins=jobs,worker,large_image,histogram --dev
@@ -124,4 +124,3 @@ script:
 # after_success:
     # - bash <(curl -s https://codecov.io/bash) -R $main_path -s $girder_path
     # - travis-sphinx deploy
-     
