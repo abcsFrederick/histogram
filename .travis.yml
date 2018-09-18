@@ -1,53 +1,53 @@
 language: python
 python:
-  - "2.7"
+    - "2.7"
 
 cache:
-  directories:
-    - $HOME/.cache
+    directories:
+        - $HOME/.cache
 
 sudo: required
 
 dist: trusty
 
 services:
-  - rabbitmq
+    - rabbitmq
 
 compiler:
-  - gcc
+    - gcc
 
 addons:
-  apt:
-    packages:
-      # Pillow dependencies (see
-      # https://pillow.readthedocs.org/en/latest/installation.html)
-      - libtiff5-dev
-      - libjpeg8-dev
-      - zlib1g-dev
-      - libfreetype6-dev
-      - liblcms2-dev
-      - libwebp-dev
-      - tcl8.6-dev
-      - tk8.6-dev
-      - python-tk
-      # vips
-      - libvips-tools
-      # openjpeg
-      - libglib2.0-dev
-      - libjpeg-dev
-      - libxml2-dev
-      - libpng12-dev
-      # openslide
-      - autoconf
-      - automake
-      - libtool
-      - pkg-config
-      - libcairo2-dev
-      - libgdk-pixbuf2.0-dev
-      - libxml2-dev
-      - libsqlite3-dev
-      # girder worker - not needed; included in travis
-      # - rabbitmq-server
+    apt:
+        packages:
+            # Pillow dependencies (see
+            # https://pillow.readthedocs.org/en/latest/installation.html)
+            - libtiff5-dev
+            - libjpeg8-dev
+            - zlib1g-dev
+            - libfreetype6-dev
+            - liblcms2-dev
+            - libwebp-dev
+            - tcl8.6-dev
+            - tk8.6-dev
+            - python-tk
+            # vips
+            - libvips-tools
+            # openjpeg
+            - libglib2.0-dev
+            - libjpeg-dev
+            - libxml2-dev
+            - libpng12-dev
+            # openslide
+            - autoconf
+            - automake
+            - libtool
+            - pkg-config
+            - libcairo2-dev
+            - libgdk-pixbuf2.0-dev
+            - libxml2-dev
+            - libsqlite3-dev
+            # girder worker - not needed; included in travis
+            # - rabbitmq-server
 
 before_install:
     # Fix a travis/boto issue.  See
@@ -125,10 +125,10 @@ script:
     # - travis-sphinx build --source=$main_path/docs
 
 after_failure:
-  # On failures, show the worker output and other information
-  - pip freeze
-  - cat /tmp/worker.out
+    # On failures, show the worker output and other information
+    - pip freeze
+    - cat /tmp/worker.out
 
-# after_success:
-    # - bash <(curl -s https://codecov.io/bash) -R $main_path -s $girder_path
+after_success:
+    - bash <(curl -s https://codecov.io/bash) -R $main_path -s $girder_path
     # - travis-sphinx deploy
