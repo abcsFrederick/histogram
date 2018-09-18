@@ -154,6 +154,8 @@ class HistogramTest(base.TestCase):
             if job.get('status') in complete:
                 break
             time.sleep(0.1)
+        if job.get('log'):
+            print(job.get('log'))
         assert job.get('status') == JobStatus.SUCCESS
 
         return ObjectId(job['_id'])
