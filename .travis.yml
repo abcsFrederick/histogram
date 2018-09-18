@@ -105,7 +105,8 @@ install:
 
     - pip install -U --upgrade-strategy eager .[memcached,openslide]
     - python setup.py install
-    # - cd $main_path
+    - cd $main_path
+    - pip install -r requirements.txt
     # - pip install -e .
     - cd $girder_path
     - npm-install-retry
