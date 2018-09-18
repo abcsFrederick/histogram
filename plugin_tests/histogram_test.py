@@ -132,16 +132,16 @@ class HistogramTest(base.TestCase):
             path='/file/chunk', fields=fields, files=files, user=self.admin)
         self.assertStatusOk(resp)
         self.assertIn('itemId', resp.json)
-        return resp.json
+        file = File().load(resp.json['_id'], user=self.admin, exc=True)
+        item = Item().load(file['itemId'], user=self.admin, exc=True)
+        return file, item
 
     def _createHistogramJob(self, **kwargs):
         from girder.plugins.jobs.models.job import Job
         from girder.plugins.jobs.constants import JobStatus
         from girder.plugins.histogram.models.histogram import Histogram
 
-        doc = self._uploadFile('plugins/large_image/plugin_tests/test_files/test_L_8.png')
-        file = File().load(doc['_id'], user=self.admin, exc=True)
-        item = Item().load(file['itemId'], user=self.admin, exc=True)
+        file, item = self._uploadFile('plugins/large_image/plugin_tests/test_files/test_L_8.png')
         token = Token().createToken(self.admin)
         doc = Histogram().createHistogramJob(item, file, user=self.admin,
                                              token=token, **kwargs)
@@ -175,6 +175,18 @@ class HistogramTest(base.TestCase):
         jobId = self._createHistogramJob()
         histogram = self._loadHistogram(jobId)
         assert self._loadHistogramFile(histogram)
+
+    def testHistogramCreateJobValidation(self):
+        from girder.plugins.histogram.models.histogram import Histogram
+
+        file1, _ = self._uploadFile('plugins/large_image/plugin_tests/test_files/test_L_8.png')
+        _, item2 = self._uploadFile('plugins/large_image/plugin_tests/test_files/test_L_8.png')
+        token = Token().createToken(self.admin)
+        with self.assertRaises(ValueError) as context:
+            Histogram().createHistogramJob(item2, file1, user=self.admin,
+                                           token=token)
+        self.assertTrue('The file must be in the item.' in
+                        str(context.exception))
 
     def testHistogramRemove(self):
         from girder.plugins.histogram.models.histogram import Histogram
