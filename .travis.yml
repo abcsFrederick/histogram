@@ -115,11 +115,18 @@ install:
 
 script:
     - mkdir -p $build_path/girder_testing_build
+    - cd $girder_worker_path
+    - python2 -m girder_worker >/tmp/worker.out 2>&1 &
     - cd $build_path/girder_testing_build
     - cmake -DPYTHON_COVERAGE:BOOL=${PY_COVG} -DPYTHON_VERSION:STRING=${TRAVIS_PYTHON_VERSION} -DCOVERAGE_MINIMUM_PASS=19 -DJS_COVERAGE_MINIMUM_PASS=19 -DRUN_CORE_TESTS:BOOL="OFF" -DTEST_PLUGINS:STRING="histogram" $girder_path
     - make -j 5
     - JASMINE_TIMEOUT=15000 ctest -VV -j 3
     # - travis-sphinx build --source=$main_path/docs
+
+after_failure:
+  # On failures, show the worker output and other information
+  - pip freeze
+  - cat /tmp/worker.out
 
 # after_success:
     # - bash <(curl -s https://codecov.io/bash) -R $main_path -s $girder_path
