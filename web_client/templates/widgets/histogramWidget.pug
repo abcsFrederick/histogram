@@ -1,0 +1,19 @@
+block content
+  - style = `height: ${height ? height + "px" : "100%"}`;
+  if status_ === 'error'
+    .g-histogram.g-histogram-error(style=style)
+      span.icon-cancel
+      .g-histogram-error-message.g-validation-failed-message
+  else if status_ === 'loading'
+    .g-histogram.g-histogram-loading(style=style)
+      span.icon-spin3.animate-spin
+  else
+    .g-histogram.g-histogram-plot(style=style)
+      - var max = Math.max.apply(Math, hist)
+      - var scale = max ? 100/max : 1
+      each n, index in hist
+        - var bin = index + 1
+        - var range = binEdges[index]
+        if hist.length !== binEdges
+          - range = `${range}–${binEdges[bin]}`
+        .g-histogram-plot-bar(style=`height: ${scale*n}%`, id=`g-histogram-plot-bar-${index}`, data-toggle="tooltip", title=`bin: ${bin} n: ${n} ${range}`)

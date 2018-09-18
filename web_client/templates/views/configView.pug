@@ -1,0 +1,11 @@
+.g-config-breadcrumb-container
+p.g-histogram-settings-description
+  | Configure how histograms are created and displayed.
+
+form#g-histogram-settings-form(role="form")
+  .form-group
+    label.control-label(for="g-histogram-settings-default-bins") Default bins
+    p.g-histogram-settings-description
+    input#g-histogram-settings-default-bins.input-sm.form-control(type="text", value=settings["histogram.default_bins"], title="Default number of bins in histogram.", placeholder="integer greater than zero (e.g. 256)")
+  p#g-histogram-settings-error-message.g-validation-failed-message
+  input.btn.btn-sm.btn-primary(type="submit", value="Save")
