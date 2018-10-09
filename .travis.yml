@@ -65,7 +65,7 @@ before_install:
     - CACHE="$HOME/.cache" OPENJPEG_VERSION=2.1.2 OPENJPEG_FILE=v2.1.2.tar.gz OPENJPEG_DIR=openjpeg-2.1.2 LIBTIFF_VERSION=4.0.8 OPENSLIDE_VERSION=3.4.1 source .install-openslide.sh
 
     - GIRDER_VERSION=2.x-maintenance
-    - GIRDER_WORKER_VERSION=master
+    - GIRDER_WORKER_VERSION=girder-2.x-compatibility
     - LARGE_IMAGE_VERSION=master
     - main_path=$PWD
     - build_path=$PWD/build
@@ -119,7 +119,7 @@ script:
     - cd $girder_worker_path
     - python2 -m girder_worker >/tmp/worker.out 2>&1 &
     - cd $build_path/girder_testing_build
-    - cmake -DPYTHON_COVERAGE:BOOL=${PY_COVG} -DPYTHON_VERSION:STRING=${TRAVIS_PYTHON_VERSION} -DRUN_CORE_TESTS:BOOL="OFF" -DTEST_PLUGINS:STRING="histogram" $girder_path
+    - cmake -DPYTHON_VERSION:STRING=${TRAVIS_PYTHON_VERSION} -DRUN_CORE_TESTS:BOOL="OFF" -DTEST_PLUGINS:STRING="histogram" $girder_path
     - make -j 5
     - JASMINE_TIMEOUT=15000 ctest -VV -j 3
     # - travis-sphinx build --source=$main_path/docs
