@@ -106,5 +106,18 @@ $(function () {
             expect($('#g-histogram-plot-bar-127').attr('data-original-title')).toMatch(/bin: 128 n: 0/);
             expect($('#g-histogram-plot-bar-255').attr('data-original-title')).toMatch(/bin: 256 n: 2/);
         });
+        it('test histogram settings', function () {
+            var done;
+            girder.rest.restRequest({
+                url: 'histogram/settings',
+                type: 'GET'
+            }).then(function (resp) {
+                done = true;
+                return null;
+            });
+            waitsFor(function () {
+                return done !== undefined;
+            });
+        });
     });
 });
