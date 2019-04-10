@@ -121,7 +121,8 @@ script:
     - cd $build_path/girder_testing_build
     - cmake -DPYTHON_VERSION:STRING=${TRAVIS_PYTHON_VERSION} -DRUN_CORE_TESTS:BOOL="OFF" -DTEST_PLUGINS:STRING="histogram" $girder_path
     - make -j 5
-    - JASMINE_TIMEOUT=15000 ctest -VV -j 3
+    # - JASMINE_TIMEOUT=15000 ctest -VV -j 3
+    - JASMINE_TIMEOUT=15000 ctest -VV
     # - travis-sphinx build --source=$main_path/docs
 
 after_failure:
