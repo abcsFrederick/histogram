@@ -80,17 +80,16 @@ var HistogramWidget = View.extend({
     _getHistogram: function () {
         this.status = 'loading';
         this.render();
+        if (!this.model._id) {
+            return;
+        }
         this.model.fetch({ignoreError: true}).done(() => {
             if (!this.model.hasChanged('fileId')) {
                 this.status = null;
                 this.render();
             }
-        }).fail((reason) => {
-            if (reason.status === 404) {
-                this.model.off('g:error', this._onError, this).on('g:error', this._onError, this).save();
-            } else {
-                this._error(reason);
-            }
+        }).fail((error) => {
+            console.log(error);
         });
     },
 
