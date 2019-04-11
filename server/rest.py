@@ -118,7 +118,13 @@ class HistogramResource(Resource):
         token = self.getCurrentToken()
 
         if fileId is None:
-            files = list(Item().childFiles(item=item, limit=2))
+            # files = list(Item().childFiles(item=item, limit=2))
+            query = {
+                'itemId': item['_id'],
+                '$or': [{'mimeType': {'$regex': '^image/'}},
+                        {'mimeType': 'application/octet-stream'}],
+            }
+            files = list(File().find(query, limit=2))
             if len(files) == 1:
                 fileId = str(files[0]['_id'])
         if not fileId:
