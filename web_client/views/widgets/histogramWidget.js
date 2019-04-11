@@ -80,7 +80,9 @@ var HistogramWidget = View.extend({
     _getHistogram: function () {
         this.status = 'loading';
         this.render();
-        if (!this.model._id) {
+        if (!this.model.get('_id')) {
+            this.status = null;
+            this.render();
             return;
         }
         this.model.fetch({ignoreError: true}).done(() => {
