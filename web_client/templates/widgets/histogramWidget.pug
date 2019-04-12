@@ -8,12 +8,12 @@ block content
     .g-histogram.g-histogram-loading(style=style)
       span.icon-spin3.animate-spin
   else
-    .g-histogram.g-histogram-plot(style=style)
+    .g-histogram(style=style)
       - var max = Math.max.apply(Math, hist)
       - var scale = max ? 100/max : 1
       each n, index in hist
         - var bin = index + 1
         - var range = binEdges[index]
-        if hist.length !== binEdges
+        if hist.length !== binEdges.length
           - range = `${range}–${binEdges[bin]}`
-        .g-histogram-plot-bar(style=`height: ${scale*n}%`, id=`g-histogram-plot-bar-${index}`, data-toggle="tooltip", title=`bin: ${bin} n: ${n} ${range}`)
+        .g-histogram-bar(style=`background: linear-gradient(rgba(0,0,0,0) ${100 - scale*n}%, rgba(0,0,0,1) ${100 - scale*n}%)`, id=`g-histogram-bar-${index}`, data-toggle="tooltip", title=`bin: ${bin} n: ${n} ${range}`, value=bin)

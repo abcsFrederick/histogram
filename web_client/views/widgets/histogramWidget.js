@@ -7,8 +7,13 @@ import histogramWidget from '../../templates/widgets/histogramWidget.pug';
 import '../../stylesheets/widgets/histogramWidget.styl';
 
 var HistogramWidget = View.extend({
+    events: {
+        'click .g-histogram-bar': '_onHistogramBar'
+    },
+
     initialize: function (settings) {
         this.status = null;
+        this.excludedBins = [];
 
         this.listenTo(this.model, 'change:fileId', this._getHistogramFile);
         // TODO: filter on event data
@@ -95,6 +100,29 @@ var HistogramWidget = View.extend({
         });
     },
 
+    _onHistogramBar: function(evt) {
+        if (!this.model.get('bitmask')) {
+             return;
+        }
+        var value = $(evt.target).attr('value');
+        var bin = parseInt(value) + this.model.get('label');
+        var excludedBins = this.excludedBins.slice();
+        var binExcluded = $(evt.target).toggleClass('exclude').hasClass('exclude');
+        if (binExcluded) {
+            excludedBins.push(bin);
+            excludedBins = _.uniq(excludedBins);
+            $(evt.target).css('opacity', '');
+        } else {
+            excludedBins = _.without(excludedBins, bin);
+            // .css('opacity', this.opacities[bin]);
+            $(evt.target).css('opacity', '100%');
+        }
+
+        this.trigger('h:excludeBins', { value: excludedBins });
+
+        this.excludedBins = excludedBins.slice();
+    },
+
     render: function () {
         var height = this.$el.height() || 0;
 
@@ -105,7 +133,7 @@ var HistogramWidget = View.extend({
         }
 
         this.$el.html(histogramWidget({
-            id: 'h-histogram-container',
+            id: 'g-histogram-container',
             status_: this.status,
             hist: hist,
             binEdges: binEdges,
