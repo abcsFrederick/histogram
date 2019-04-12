@@ -1,3 +1,5 @@
+import _ from 'underscore';
+
 import eventStream from 'girder/utilities/EventStream';
 import View from 'girder/views/View';
 import events from 'girder/events';
@@ -100,9 +102,9 @@ var HistogramWidget = View.extend({
         });
     },
 
-    _onHistogramBar: function(evt) {
+    _onHistogramBar: function (evt) {
         if (!this.model.get('bitmask')) {
-             return;
+            return;
         }
         var value = $(evt.target).attr('value');
         var bin = parseInt(value) + this.model.get('label');
@@ -111,11 +113,11 @@ var HistogramWidget = View.extend({
         if (binExcluded) {
             excludedBins.push(bin);
             excludedBins = _.uniq(excludedBins);
-            $(evt.target).css('opacity', '');
+            $(evt.target).css('opacity', 0);
         } else {
             excludedBins = _.without(excludedBins, bin);
             // .css('opacity', this.opacities[bin]);
-            $(evt.target).css('opacity', '100%');
+            $(evt.target).css('opacity', 1);
         }
 
         this.trigger('h:excludeBins', { value: excludedBins });

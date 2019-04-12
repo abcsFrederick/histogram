@@ -94,17 +94,17 @@ $(function () {
         });
         girderTest.waitForLoad();
         it('check histogram bins', function () {
-            expect($('.g-histogram-plot-bar').length).toBe(256);
+            expect($('.g-histogram-bar').length).toBe(256);
         });
         it('check histogram bin height', function () {
-            expect($('#g-histogram-plot-bar-0').attr('style')).toBe('height: 100%');
-            expect($('#g-histogram-plot-bar-128').attr('style')).toBe('height: 0%');
-            expect($('#g-histogram-plot-bar-255').attr('style')).toBe('height: 100%');
+            expect($('#g-histogram-bar-0').attr('style')).toMatch(/ 0%\)$/);
+            expect($('#g-histogram-bar-128').attr('style')).toMatch(/ 100%\)$/);
+            expect($('#g-histogram-bar-255').attr('style')).toMatch(/ 0%\)$/);
         });
         it('check histogram bin label', function () {
-            expect($('#g-histogram-plot-bar-0').attr('data-original-title')).toMatch(/bin: 1 n: 2/);
-            expect($('#g-histogram-plot-bar-127').attr('data-original-title')).toMatch(/bin: 128 n: 0/);
-            expect($('#g-histogram-plot-bar-255').attr('data-original-title')).toMatch(/bin: 256 n: 2/);
+            expect($('#g-histogram-bar-0').attr('data-original-title')).toMatch(/bin: 1 n: 2/);
+            expect($('#g-histogram-bar-127').attr('data-original-title')).toMatch(/bin: 128 n: 0/);
+            expect($('#g-histogram-bar-255').attr('data-original-title')).toMatch(/bin: 256 n: 2/);
         });
         it('test histogram settings', function () {
             var done;
