@@ -16,4 +16,7 @@ block content
         - var range = binEdges[index]
         if hist.length !== binEdges.length
           - range = `${range}–${binEdges[bin]}`
-        .g-histogram-bar(style=`background: linear-gradient(rgba(0,0,0,0) ${100 - scale*n}%, rgba(0,0,0,1) ${100 - scale*n}%)`, id=`g-histogram-bar-${index}`, data-toggle="tooltip", title=`bin: ${bin} n: ${n} ${range}`, value=bin)
+        - var excludeClass = 'exclude'
+        if ( excludedBins.indexOf(index) < 0 )
+          - excludeClass = ''
+        .g-histogram-bar(class=excludeClass, style=`background: linear-gradient(rgba(1,0,0,0) ${100 - scale*n}%, rgba(0,0,0,1) ${100 - scale*n}%)`, id=`g-histogram-bar-${index}`, data-toggle="tooltip", title=`bin: ${bin} n: ${n} ${range}`, i=index)

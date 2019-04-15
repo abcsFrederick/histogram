@@ -106,23 +106,18 @@ var HistogramWidget = View.extend({
         if (!this.model.get('bitmask')) {
             return;
         }
-        var value = $(evt.target).attr('value');
-        var bin = parseInt(value) + this.model.get('label');
-        var excludedBins = this.excludedBins.slice();
-        var binExcluded = $(evt.target).toggleClass('exclude').hasClass('exclude');
-        if (binExcluded) {
-            excludedBins.push(bin);
-            excludedBins = _.uniq(excludedBins);
-            $(evt.target).css('opacity', 0);
+
+        var bin = parseInt($(evt.target).attr('i'));
+
+        if (_.contains(this.excludedBins, bin)) {
+            this.excludedBins = _.without(this.excludedBins, bin);
         } else {
-            excludedBins = _.without(excludedBins, bin);
-            // .css('opacity', this.opacities[bin]);
-            $(evt.target).css('opacity', 1);
+            this.excludedBins.push(bin);
         }
 
-        this.trigger('h:excludeBins', { value: excludedBins });
+        this.trigger('h:excludeBins', { value: this.excludedBins.slice() });
 
-        this.excludedBins = excludedBins.slice();
+        this.render();
     },
 
     render: function () {
@@ -134,12 +129,15 @@ var HistogramWidget = View.extend({
             binEdges = this.histogram.binEdges;
         }
 
+        this.$('[data-toggle="tooltip"]').tooltip('destroy');
+
         this.$el.html(histogramWidget({
             id: 'g-histogram-container',
             status_: this.status,
             hist: hist,
             binEdges: binEdges,
-            height: height
+            height: height,
+            excludedBins: this.excludedBins
         }));
 
         this.$('[data-toggle="tooltip"]').tooltip({container: 'body'});
