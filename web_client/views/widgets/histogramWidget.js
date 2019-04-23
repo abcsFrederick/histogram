@@ -17,6 +17,8 @@ var HistogramWidget = View.extend({
         this.status = null;
         this.excludedBins = [];
 
+        this.colormap = settings.colormap;
+
         this.listenTo(this.model, 'change:fileId', this._getHistogramFile);
         // TODO: filter on event data
         this.listenTo(
@@ -137,12 +139,20 @@ var HistogramWidget = View.extend({
             hist: hist,
             binEdges: binEdges,
             height: height,
-            excludedBins: this.excludedBins
+            excludedBins: this.excludedBins,
+            colormap: this.colormap,
+            label: this.model.get('label')
         }));
 
         this.$('[data-toggle="tooltip"]').tooltip({container: 'body'});
 
         return this;
+    },
+
+    setColormap: function (colormap) {
+        this.colormap = colormap;
+
+        this.render();
     }
 });
 
