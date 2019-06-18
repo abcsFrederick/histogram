@@ -188,7 +188,6 @@ var HistogramWidget = View.extend({
                     $(bar).removeClass('exclude');
                 }
             });
-            // this.renderColormap();
             this.trigger('h:range', evt);
         });
     },
@@ -196,36 +195,6 @@ var HistogramWidget = View.extend({
         this.colormap = colormap;
 
         this.render();
-    },
-    renderColormap: function () {
-        if (!this.model || !this.colormap || !this.colormap.get('colormap') || !this.model.get('bitmask') && !this.bin_range) {
-            this.$('.g-histogram-bar').each((i, bar) => {
-                $(bar).css('fill', '');
-            });
-            return;
-        }
-        if (!this.model.get('bitmask')) {
-            var scale = this.model.get('bins') / (this.bin_range.max - this.bin_range.min);
-        }
-        var colormapArray = this.colormap.get('colormap');
-        this.$('.g-histogram-bar').each((i, bar) => {
-            if (i < this.bin_range.min || i > this.bin_range.max) {
-                $(bar).css('fill', '');
-                return;
-            }
-            if (this.model.get('bitmask')) {
-                // i -= !this.model.get('label');
-                // i = i >= 0 ? 1 << i : 0;
-                i += this.model.get('label') ? 1 : 0;
-                i = Math.round(i * 255 / 8);
-            } else {
-                i = Math.round(scale * (i - this.bin_range.min));
-            }
-            if (!colormapArray[i]) {
-                return;
-            }
-            $(bar).css('fill', 'rgb(' + colormapArray[i].join(', ') + ')');
-        });
     }
 });
 
