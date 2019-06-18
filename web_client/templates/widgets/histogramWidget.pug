@@ -24,3 +24,4 @@ block content
           - var colorIndex = Math.round((index + label)*255/(hist.length + label))
           - color = `rgba(${colormap[colorIndex][0]},${colormap[colorIndex][1]},${colormap[colorIndex][2]},1)`
         .g-histogram-bar(class=excludeClass, style=`background: linear-gradient(rgba(0,0,0,0) ${100 - scale*n}%, ${color} ${100 - scale*n}%)`, id=`g-histogram-bar-${index}`, data-toggle="tooltip", title=`bin: ${bin} n: ${n} ${range}`, i=index)
+  #g-histogram-slider-container.g-histogram

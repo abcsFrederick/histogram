@@ -106,6 +106,79 @@ $(function () {
             expect($('#g-histogram-bar-127').attr('data-original-title')).toMatch(/bin: 128 n: 0/);
             expect($('#g-histogram-bar-255').attr('data-original-title')).toMatch(/bin: 256 n: 2/);
         });
+        describe('check histogram slider', function () {
+            // var expectLeft;
+            // runs(function () {
+            //     expectLeft = $('.range-slider.min-range-slider').offset().left + 10;
+            //     $('.range-slider.min-range-slider').mousedown(function(){
+            //         clicking = true;
+            //     });
+            // });
+            // waitsFor(function () {
+            //     return clicking === true;
+            // });
+            // runs(function () {
+            //     $('.range-slider.min-range-slider').mousemove(function(){
+            //         if(clicking === false) return;
+            //         $('.range-slider.min-range-slider').offset().left += 10;
+            //         expect($('.range-slider.min-range-slider').offset().left).toBe(expectLeft);
+            //     });
+            // });
+            // var expectLeft;
+            // var rangeSliderView;
+            // beforeEach(function () {
+            //     rangeSliderView = girder.plugins.histogram.views.widgets.RangeSliderWidget.prototype;
+            //     expectLeft = $('.range-slider.min-range-slider').offset().left + 10;
+            //     var e = {
+            //         data: {
+            //             sliderRange_: {
+            //                 min: $('.range-slider.min-range-slider').offset().left,
+            //                 max: $('.range-slider.max-range-slider').offset().left
+            //             },
+            //             x: 10,
+            //             target: '.range-slider.min-range-slider'
+            //         },
+            //         pageX: $('.range-slider.min-range-slider').offset().left
+            //     };
+            //     spyOn(rangeSliderView, 'onSliderMove').andCallThrough();
+            //     rangeSliderView.onSliderMove(e);
+            // });
+            var initLeft, initTop, mousemoveEvent;
+
+            beforeEach(function () {
+                initLeft = $('.range-slider.min-range-slider').offset().left;
+                initTop = $('.range-slider.min-range-slider').offset().top;
+                mousemoveEvent = $.Event('mousemove');
+                mousemoveEvent.pageX = initLeft + 10;
+                mousemoveEvent.pageY = initTop + 10;
+            });
+            it('slider render', function () {
+                expect($('.range-slider.min-range-slider').length).toBe(1);
+                expect($('.range-slider.max-range-slider').length).toBe(1);
+            });
+            it('min slider move right 10 px', function () {
+                runs(function () {
+                    $(".min-range-slider").mousedown();
+                    $("body").trigger(mousemoveEvent);
+                    $("body").mouseup();
+                });
+                waitsFor(function () {
+                    return $('.min-range-slider').offset().left > initLeft;
+                }, 'slider moves done');
+                runs(function () {
+                    expect($('.min-range-slider').offset().left).toBe(initLeft + 10);
+                    expect($('.min-range-slider').offset().top).toBe(initTop);
+                });
+                waitsFor(function () {
+                    return !$('#g-histogram-bar-0').hasClass('selected');
+                }, 'color map(#g-histogram-bar-0) bar hide');
+                // expect(rangeSliderView.onSliderMove).toHaveBeenCalled();
+                // expect($('.range-slider.min-range-slider').offset().left).toBe(expectLeft);
+            });
+            // it('color map(#g-histogram-bar-0) bar hide', function () {
+            //     expect($('#g-histogram-bar-0').hasClass('selected')).toBe(0);
+            // });
+        });
         it('test histogram settings', function () {
             var done;
             girder.rest.restRequest({
