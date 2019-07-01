@@ -50,6 +50,9 @@ if array.dtype == numpy.uint8 and bins == 256:
 else:
     _bins = bins
 '''
+if array.dtype == numpy.uint8:
+    _bins = numpy.arange(numpy.min(array), numpy.max(array) + 2)
+
 
 if bitmask:
     hist = numpy.zeros(array.dtype.itemsize*8 + 1 - label)
@@ -59,7 +62,7 @@ if bitmask:
     for i in range(1, hist.shape[0] + label):
         hist[i - label] = (array & 1 << i - 1 > 0).sum()
 else:
-    hist, binEdges = numpy.histogram(array, bins=bins)
+    hist, binEdges = numpy.histogram(array, bins=_bins)
 
 histogram = json.dumps({
     'label': label,

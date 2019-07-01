@@ -15,7 +15,7 @@ var HistogramWidget = View.extend({
     },
 
     initialize: function (settings) {
-        this.status = null;
+        this.status = 'loading';
         this.excludedBins = [];
 
         this.colormap = settings.colormap;
@@ -79,7 +79,7 @@ var HistogramWidget = View.extend({
             }).fail(this._error);
         } else {
             this.histogram = undefined;
-            this.status = null;
+            this.status = 'loading';
             this.render();
         }
     },
@@ -93,7 +93,7 @@ var HistogramWidget = View.extend({
         this.status = 'loading';
         this.render();
         if (!this.model.get('_id')) {
-            this.status = null;
+            this.status = 'loading';
             this.render();
             return;
         }
@@ -111,23 +111,41 @@ var HistogramWidget = View.extend({
         if (!this.model.get('bitmask')) {
             return;
         }
-
+        if ($(evt.target).attr('i') < this.threshold.min - 1 ||
+            $(evt.target).attr('i') > this.threshold.max - 1) {
+            return;
+        }
         var bin = parseInt($(evt.target).attr('i'));
+
+        let _min = this.threshold.min - 1,
+            _max = this.threshold.max - 1,
+            excludeInSliderRange = [], exclude;
+        for (let i = 0; i < _min; i++) {
+            excludeInSliderRange.push(i);
+        }
+        for (let i = 7; i > _max; i--) {
+            excludeInSliderRange.push(i);
+        }
 
         if (_.contains(this.excludedBins, bin)) {
             this.excludedBins = _.without(this.excludedBins, bin);
         } else {
             this.excludedBins.push(bin);
         }
+        if (this.excludedBins.length) {
+            exclude = excludeInSliderRange.concat(this.excludedBins);
+        } else {
+            exclude = excludeInSliderRange;
+        }
 
-        this.trigger('h:excludeBins', { value: this.excludedBins.slice() });
+        this.trigger('h:excludeBins', { value: _.uniq(exclude) });
 
         this.render();
     },
 
     render: function () {
         var height = this.$el.height() || 0;
-
+        // debugger
         var hist = [], binEdges;
         if (this.histogram) {
             hist = this.histogram.hist;
@@ -160,6 +178,11 @@ var HistogramWidget = View.extend({
     },
 
     _histogramSliderRender: function (hist, binEdges) {
+        if (this._rangeSliderView) {
+            this._rangeSliderView.destroy();
+            $('body').off('mousemove');
+            $('body').off('mouseup');
+        }
         this._rangeSliderView = new RangeSliderWidget({
             el: this.$('#g-histogram-slider-container'),
             parentView: this,
@@ -172,8 +195,12 @@ var HistogramWidget = View.extend({
             if ($(bar).attr('i') >= this._rangeSliderView.bins.min &&
                 $(bar).attr('i') <= this._rangeSliderView.bins.max) {
                 $(bar).addClass('selected');
+            } else {
+                $(bar).addClass('exclude');
             }
-            if (_.contains(this.excludedBins, i + this.model.get('label'))) {
+            if (_.contains(this.excludedBins, i)) {
+                // debugger
+                $(bar).removeClass('selected');
                 $(bar).addClass('exclude');
             }
         });
@@ -181,11 +208,12 @@ var HistogramWidget = View.extend({
             this.threshold = evt.range;
             this.bin_range = evt.bins;
             this.$('.g-histogram-bar').each((i, bar) => {
-                if ($(bar).attr('i') >= evt.bins.min && $(bar).attr('i') <= evt.bins.max) {
+                if ($(bar).attr('i') >= evt.bins.min && $(bar).attr('i') <= evt.bins.max && !(_.contains(this.excludedBins, i))) {
+                    $(bar).removeClass('exclude');
                     $(bar).addClass('selected');
                 } else {
                     $(bar).removeClass('selected');
-                    $(bar).removeClass('exclude');
+                    $(bar).addClass('exclude');
                 }
             });
             this.trigger('h:range', evt);

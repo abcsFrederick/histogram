@@ -20,8 +20,8 @@ var RangeSliderWidget = View.extend({
 
     // FIXME: events prototype
     onSliderEnd: function (e) {
+        if (!this._mousedown) return;
         this._mousedown = false;
-
         var sliderRange = this.sliderRange;
         var range = this.bins;
         var _range = {
@@ -29,11 +29,16 @@ var RangeSliderWidget = View.extend({
             max: range.max
         };
 
+        let offset;
         if (this._minSider) {
             let n = Math.round((this.$('.min-range-slider').offset().left - sliderRange.min) / this.barWidth);
+            offset = Math.round(n * this.barWidth) + sliderRange.min;
+            this.$('.min-range-slider').offset({left: offset});
             _range.min = n;
         } else if (this._maxSider) {
             let n = Math.round((sliderRange.max - this.$('.max-range-slider').offset().left) / this.barWidth);
+            offset = sliderRange.max - Math.round(n * this.barWidth);
+            this.$('.max-range-slider').offset({left: offset});
             _range.max = this.hist.length - n - 1;
         }
 
@@ -99,6 +104,7 @@ var RangeSliderWidget = View.extend({
         };
 
         this.bins = {min: 0, max: this.hist.length - 1};
+
         if (this.range) {
             this.binEdges.forEach((value, index) => {
                 if (value === this.range.min) {
