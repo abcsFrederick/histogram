@@ -69,6 +69,7 @@ before_install:
     - LARGE_IMAGE_VERSION=master
     - main_path=$PWD
     - build_path=$PWD/build
+    - Histogram_PATH=$TRAVIS_BUILD_DIR
     - mkdir -p $build_path
 
     - girder_path=$build_path/girder
@@ -130,5 +131,5 @@ after_failure:
     - cat /tmp/worker.out
 
 after_success:
-    - bash <(curl -s https://codecov.io/bash) -R $main_path -s $girder_path
+    - bash <(curl -s https://codecov.io/bash) -R $Histogram_PATH -s $girder_path
     # - travis-sphinx deploy
