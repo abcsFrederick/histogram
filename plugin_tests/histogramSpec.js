@@ -4,6 +4,40 @@ girderTest.importPlugin('large_image');
 girderTest.importPlugin('histogram');
 girderTest.startApp();
 
+function _goToHistogramPluginSettings() {
+    waitsFor(function () {
+        return $('a[g-target="admin"]:visible').length > 0;
+    }, 'admin console link to display');
+
+    runs(function () {
+        $('a[g-target="admin"]:visible').click();
+    });
+
+    waitsFor(function () {
+        return $('.g-plugins-config:visible').length > 0;
+    }, 'admin console to display');
+
+    runs(function () {
+        $('.g-plugins-config:visible').click();
+    });
+
+    waitsFor(function () {
+        return $('a[g-route="plugins/histogram/config"]:visible').length > 0;
+    }, 'plugins page to display');
+
+    runs(function () {
+        $('a[g-route="plugins/histogram/config"]:visible').click();
+    });
+
+    waitsFor(function () {
+        return $('#g-histogram-settings-form:visible').length > 0;
+    }, 'histogram config to display');
+
+    waitsFor(function () {
+        return girder.rest.numberOutstandingRestRequests() === 0;
+    }, 'rest requests to finish');
+}
+
 $(function () {
     var itemId, histogramId;
 
@@ -11,6 +45,36 @@ $(function () {
         it('create the admin user', function () {
             girderTest.createUser(
                 'admin', 'admin@email.com', 'Admin', 'Admin', 'testpassword')();
+        });
+
+        it('goes to histogram plugin settings', _goToHistogramPluginSettings);
+
+        it('sets and saves histogram bins', function () {
+            var settings;
+            runs(function () {
+                $('#g-histogram-settings-default-bins').val(256);
+                $('#g-histogram-settings-form').submit();
+            });
+            waitsFor(function () {
+                return $('.alert:contains("Settings saved.")').length > 0;
+            }, 'settings to save');
+
+            runs(function () {
+                girder.rest.restRequest({
+                    url: 'histogram/settings'
+                }).then(function (resp) {
+                    settings = resp;
+                    return null;
+                });
+            });
+
+            waitsFor(function () {
+                return settings !== undefined;
+            }, 'get histogram settings');
+
+            runs(function () {
+                expect(settings['histogram.default_bins']).toBe(256);
+            });
         });
         it('go to collections page', function () {
             runs(function () {
@@ -26,6 +90,7 @@ $(function () {
             });
         });
         it('create collection', girderTest.createCollection('test', '', 'image'));
+
         it('upload test file', function () {
             girderTest.waitForLoad();
             runs(function () {
