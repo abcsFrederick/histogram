@@ -105,104 +105,223 @@ $(function () {
                 itemId = $('.large_image_thumbnail img').prop('src').match(/\/item\/([^/]*)/)[1];
             });
         });
-        it('create test histogram', function () {
-            var job;
-            runs(function () {
-                girder.rest.restRequest({
-                    url: 'histogram',
-                    type: 'POST',
-                    data: { itemId: itemId }
-                }).then(function (resp) {
-                    job = new girder.plugins.jobs.models.JobModel({
-                        _id: resp._id
+        describe('not bitmask histogram test', function () {
+            it('create test histogram', function () {
+                var job;
+                runs(function () {
+                    girder.rest.restRequest({
+                        url: 'histogram',
+                        type: 'POST',
+                        data: { itemId: itemId }
+                    }).then(function (resp) {
+                        job = new girder.plugins.jobs.models.JobModel({
+                            _id: resp._id
+                        });
+                        return null;
                     });
-                    return null;
-                });
-            });
-            waitsFor(function () {
-                return job !== undefined;
-            });
-            waitsFor(function () {
-                var fetched = false;
-                job.fetch().then(function (resp) {
-                    fetched = true;
-                    return null;
                 });
                 waitsFor(function () {
-                    return fetched;
+                    return job !== undefined;
                 });
-                return job.get('status') !== undefined && girder.plugins.jobs.JobStatus.finished(job.get('status'));
-            });
-            runs(function () {
-                expect(job.get('status')).toBe(girder.plugins.jobs.JobStatus.SUCCESS);
-                girder.rest.restRequest({
-                    url: 'histogram',
-                    type: 'GET',
-                    data: {
-                        jobId: job.get('_id'),
-                        limit: 2
-                    }
-                }).then(function (resp) {
-                    expect(resp.length).toBe(1);
-                    histogramId = resp[0]._id;
-                    return null;
+                waitsFor(function () {
+                    var fetched = false;
+                    job.fetch().then(function (resp) {
+                        fetched = true;
+                        return null;
+                    });
+                    waitsFor(function () {
+                        return fetched;
+                    });
+                    return job.get('status') !== undefined && girder.plugins.jobs.JobStatus.finished(job.get('status'));
+                });
+                runs(function () {
+                    expect(job.get('status')).toBe(girder.plugins.jobs.JobStatus.SUCCESS);
+                    girder.rest.restRequest({
+                        url: 'histogram',
+                        type: 'GET',
+                        data: {
+                            jobId: job.get('_id'),
+                            limit: 2
+                        }
+                    }).then(function (resp) {
+                        expect(resp.length).toBe(1);
+                        histogramId = resp[0]._id;
+                        return null;
+                    });
+                });
+                waitsFor(function () {
+                    return histogramId !== undefined;
                 });
             });
-            waitsFor(function () {
-                return histogramId !== undefined;
+            it('view test histogram', function () {
+                runs(function () {
+                    girder.router.navigate('histogram/' + histogramId + '/view', {trigger: true});
+                });
             });
-        });
-        it('view test histogram', function () {
-            runs(function () {
-                girder.router.navigate('histogram/' + histogramId + '/view', {trigger: true});
+            girderTest.waitForLoad();
+            it('check histogram bins', function () {
+                expect($('.g-histogram-bar').length).toBe(256);
             });
-        });
-        girderTest.waitForLoad();
-        it('check histogram bins', function () {
-            expect($('.g-histogram-bar').length).toBe(256);
-        });
-        it('check histogram bin height', function () {
-            expect($('#g-histogram-bar-0').attr('style')).toMatch(/ 0%\)$/);
-            expect($('#g-histogram-bar-128').attr('style')).toMatch(/ 100%\)$/);
-            expect($('#g-histogram-bar-255').attr('style')).toMatch(/ 0%\)$/);
-        });
-        it('check histogram bin label', function () {
-            expect($('#g-histogram-bar-0').attr('data-original-title')).toMatch(/bin: 1 n: 2/);
-            expect($('#g-histogram-bar-127').attr('data-original-title')).toMatch(/bin: 128 n: 0/);
-            expect($('#g-histogram-bar-255').attr('data-original-title')).toMatch(/bin: 256 n: 2/);
-        });
-        describe('check histogram slider', function () {
-            var initLeft, initTop, mousemoveEvent;
+            it('check histogram bin height', function () {
+                expect($('#g-histogram-bar-0').attr('style')).toMatch(/ 0%\)$/);
+                expect($('#g-histogram-bar-128').attr('style')).toMatch(/ 100%\)$/);
+                expect($('#g-histogram-bar-255').attr('style')).toMatch(/ 0%\)$/);
+            });
+            it('check histogram bin label', function () {
+                expect($('#g-histogram-bar-0').attr('data-original-title')).toMatch(/bin: 1 n: 2/);
+                expect($('#g-histogram-bar-127').attr('data-original-title')).toMatch(/bin: 128 n: 0/);
+                expect($('#g-histogram-bar-255').attr('data-original-title')).toMatch(/bin: 256 n: 2/);
+            });
+            describe('not bitmask histogram check slider and click on bar', function () {
+                var initLeft, initTop, mousemoveEvent;
 
-            beforeEach(function () {
-                initLeft = $('.range-slider.min-range-slider').offset().left;
-                initTop = $('.range-slider.min-range-slider').offset().top;
-                mousemoveEvent = $.Event('mousemove');
-                mousemoveEvent.pageX = initLeft + 10;
-                mousemoveEvent.pageY = initTop + 10;
-            });
-            it('slider render', function () {
-                expect($('.range-slider.min-range-slider').length).toBe(1);
-                expect($('.range-slider.max-range-slider').length).toBe(1);
-            });
-            it('min slider move right 10 px', function () {
-                runs(function () {
-                    $('.min-range-slider').mousedown();
-                    $('body').trigger(mousemoveEvent);
-                    $('body').mouseup();
+                beforeEach(function () {
+                    initLeft = $('.range-slider.min-range-slider').offset().left;
+                    initTop = $('.range-slider.min-range-slider').offset().top;
+                    mousemoveEvent = $.Event('mousemove');
+                    mousemoveEvent.pageX = initLeft + 10;
+                    mousemoveEvent.pageY = initTop + 10;
                 });
-                waitsFor(function () {
-                    return $('.min-range-slider').offset().left > initLeft;
-                }, 'slider moves done');
-                runs(function () {
-                    expect($('.min-range-slider').offset().left).toBe(initLeft + 10);
-                    expect($('.min-range-slider').offset().top).toBe(initTop);
+                it('slider render', function () {
+                    expect($('.range-slider.min-range-slider').length).toBe(1);
+                    expect($('.range-slider.max-range-slider').length).toBe(1);
                 });
-                waitsFor(function () {
-                    return !$('#g-histogram-bar-0').hasClass('selected');
-                }, 'color map(#g-histogram-bar-0) bar hide');
+
+                it('click on bar', function () {
+                    runs(function () {
+                        $('#g-histogram-bar-0').click();
+                        expect($('#g-histogram-bar-0').hasClass('selected')).toBe(true);
+                    });
+                });
+
+                it('min slider move right 10 px', function () {
+                    runs(function () {
+                        $('.min-range-slider').mousedown();
+                        $('body').trigger(mousemoveEvent);
+                        $('body').mouseup();
+                    });
+                    waitsFor(function () {
+                        return $('.min-range-slider').offset().left > initLeft;
+                    }, 'slider moves done');
+                    runs(function () {
+                        expect($('.min-range-slider').offset().left).toBe(initLeft + 10);
+                        expect($('.min-range-slider').offset().top).toBe(initTop);
+                    });
+                    waitsFor(function () {
+                        return !$('#g-histogram-bar-0').hasClass('selected');
+                    }, 'color map(#g-histogram-bar-0) bar hide');
+                });
             });
         });
+        describe('bitmask histogram test', function () {
+            it('create test bitmask histogram', function () {
+                var job, bitHistogramId;
+                runs(function () {
+                    girder.rest.restRequest({
+                        url: 'histogram',
+                        type: 'POST',
+                        data: { itemId: itemId, bitmask: true }
+                    }).then(function (resp) {
+                        job = new girder.plugins.jobs.models.JobModel({
+                            _id: resp._id
+                        });
+                        return null;
+                    });
+                });
+                waitsFor(function () {
+                    return job !== undefined;
+                });
+                waitsFor(function () {
+                    var fetched = false;
+                    job.fetch().then(function (resp) {
+                        fetched = true;
+                        return null;
+                    });
+                    waitsFor(function () {
+                        return fetched;
+                    });
+                    return job.get('status') !== undefined && girder.plugins.jobs.JobStatus.finished(job.get('status'));
+                });
+                runs(function () {
+                    expect(job.get('status')).toBe(girder.plugins.jobs.JobStatus.SUCCESS);
+                    girder.rest.restRequest({
+                        url: 'histogram',
+                        type: 'GET',
+                        data: {
+                            jobId: job.get('_id'),
+                            limit: 2
+                        }
+                    }).then(function (resp) {
+                        expect(resp.length).toBe(1);
+                        bitHistogramId = resp[0]._id;
+                        return null;
+                    });
+                });
+                waitsFor(function () {
+                    return bitHistogramId !== undefined;
+                });
+            });
+            it('view test bitmask histogram', function () {
+                runs(function () {
+                    girder.router.navigate('histogram/' + histogramId + '/view', {trigger: true});
+                });
+            });
+            girderTest.waitForLoad();
+            describe('bitmask histogram check slider and click on bar', function () {
+                var initLeft, initRight, range, initTop, mousemoveEvent;
+
+                beforeEach(function () {
+                    initLeft = $('.range-slider.min-range-slider').offset().left;
+                    initRight = $('.range-slider.max-range-slider').offset().left;
+                    range = initRight - initLeft;
+                    initTop = $('.range-slider.min-range-slider').offset().top;
+                    mousemoveEvent = $.Event('mousemove');
+                    mousemoveEvent.pageX = initLeft + range / 8;
+                    mousemoveEvent.pageY = initTop + range / 8;
+                });
+                it('slider render', function () {
+                    expect($('.range-slider.min-range-slider').length).toBe(1);
+                    expect($('.range-slider.max-range-slider').length).toBe(1);
+                });
+
+                it('min slider move right 1/8 of bin range px', function () {
+                    runs(function () {
+                        $('.min-range-slider').mousedown();
+                        $('body').trigger(mousemoveEvent);
+                        $('body').mouseup();
+                    });
+                    waitsFor(function () {
+                        return $('.min-range-slider').offset().left > initLeft;
+                    }, 'slider moves done');
+                    runs(function () {
+                        expect($('#g-histogram-bar-0').hasClass('exclude')).toBe(true);
+                        expect($('.min-range-slider').offset().top).toBe(initTop);
+                    });
+                    waitsFor(function () {
+                        return !$('#g-histogram-bar-0').hasClass('selected');
+                    }, 'color map(#g-histogram-bar-0) bar hide');
+                });
+
+                it('click on bar', function () {
+                    runs(function () {
+                        $('#g-histogram-bar-3').click();
+                    });
+                    waitsFor(function () {
+                        return !$('#g-histogram-bar-3').hasClass('selected');
+                    }, 'color map(#g-histogram-bar-3) bar hide');
+                    runs(function () {
+                        $('#g-histogram-bar-0').click();
+                    });
+                    waitsFor(function () {
+                        return $('#g-histogram-bar-0').hasClass('exclude');
+                    }, 'color map(#g-histogram-bar-0) bar should still hide');
+                    runs(function () {
+                        expect($('#g-histogram-bar-0').hasClass('selected')).toBe(false);
+                    });
+                });
+            });
+        });
+
         it('test histogram settings', function () {
             var done;
             girder.rest.restRequest({

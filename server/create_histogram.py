@@ -38,7 +38,6 @@ except (ImportError, IOError, OSError):
 else:
     if image.mode not in ('1', 'L', 'P', 'I', 'F'):
         raise ValueError('invalid image type for histogram: %s' % image.mode)
-
 array = numpy.array(image)
 if label:
     array = array[numpy.nonzero(array)]
@@ -64,12 +63,13 @@ if bitmask:
 else:
     hist, binEdges = numpy.histogram(array, bins=_bins)
 
+threshold = numpy.array([numpy.min(array), numpy.max(array)], dtype=numpy.int64)
 histogram = json.dumps({
     'label': label,
     'bitmask': bitmask,
     'bins': bins,
     'hist': list(hist),
-    'binEdges': list(binEdges),
+    'binEdges': list(binEdges)
 })
 
 # TODO: implement RGB(A)
