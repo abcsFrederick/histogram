@@ -10,12 +10,12 @@ class CreateHistogramTest(unittest.TestCase):
 
     def testComputeHistogram(self):
 
-        import histogram.create_histogram
+        import histogramScript.create_histogram
 
-        hist, binEdges = histogram.create_histogram.computeHistogram(self.path,
-                                                                     self.label,
-                                                                     self.bins,
-                                                                     self.bitmask)
+        hist, binEdges = histogramScript.create_histogram.computeHistogram(self.path,
+                                                                           self.label,
+                                                                           self.bins,
+                                                                           self.bitmask)
         self.assertEqual(binEdges[-1], 256)
         self.assertEqual(len(binEdges), 257)
         self.assertEqual(hist[-1], 5647232)
