@@ -172,15 +172,20 @@ $(function () {
                 expect($('#g-histogram-bar-127').attr('data-original-title')).toMatch(/bin: 128 n: 0/);
                 expect($('#g-histogram-bar-255').attr('data-original-title')).toMatch(/bin: 256 n: 2/);
             });
-            describe('not bitmask histogram check slider and click on bar', function () {
-                var initLeft, initTop, mousemoveEvent;
+            describe('histogram check slider and click on bar', function () {
+                var initLeft, initTop, initLeftMax, initTopMax, mousemoveEvent, mousemoveEventMax;
 
                 beforeEach(function () {
                     initLeft = $('.range-slider.min-range-slider').offset().left;
                     initTop = $('.range-slider.min-range-slider').offset().top;
+                    initLeftMax = $('.range-slider.max-range-slider').offset().left;
+                    initTopMax = $('.range-slider.max-range-slider').offset().top;
                     mousemoveEvent = $.Event('mousemove');
                     mousemoveEvent.pageX = initLeft + 10;
                     mousemoveEvent.pageY = initTop + 10;
+                    mousemoveEventMax = $.Event('mousemove');
+                    mousemoveEventMax.pageX = initLeftMax - 10;
+                    mousemoveEventMax.pageY = initTopMax - 10;
                 });
                 it('slider render', function () {
                     expect($('.range-slider.min-range-slider').length).toBe(1);
@@ -209,6 +214,24 @@ $(function () {
                     });
                     waitsFor(function () {
                         return !$('#g-histogram-bar-0').hasClass('selected');
+                    }, 'color map(#g-histogram-bar-0) bar hide');
+                });
+
+                it('max slider move left 10 px', function () {
+                    runs(function () {
+                        $('.max-range-slider').mousedown();
+                        $('body').trigger(mousemoveEventMax);
+                        $('body').mouseup();
+                    });
+                    waitsFor(function () {
+                        return $('.max-range-slider').offset().left < initLeftMax;
+                    }, 'slider moves done');
+                    runs(function () {
+                        expect($('.max-range-slider').offset().left).toBe(initLeftMax - 10);
+                        expect($('.max-range-slider').offset().top).toBe(initTopMax);
+                    });
+                    waitsFor(function () {
+                        return !$('#g-histogram-bar-255').hasClass('selected');
                     }, 'color map(#g-histogram-bar-0) bar hide');
                 });
             });
