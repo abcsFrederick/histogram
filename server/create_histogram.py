@@ -61,6 +61,7 @@ def computeHistogram(in_path, label, bins, bitmask):
 
     return hist, binEdges
 
+
 try:
     # Define Girder Worker globals for the style checker
     in_path = in_path   # noqa

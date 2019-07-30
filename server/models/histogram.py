@@ -65,7 +65,7 @@ class Histogram(AccessControlledModel):
         if file_['itemId'] != item['_id']:
             raise ValueError('The file must be in the item.')
 
-        path = os.path.join(os.path.dirname(__file__), '../../histogramScript',
+        path = os.path.join(os.path.dirname(__file__), '..',
                             'create_histogram.py')
         with open(path, 'r') as f:
             script = f.read()
