@@ -66,7 +66,7 @@ before_install:
 
     - GIRDER_VERSION=2.x-maintenance
     - GIRDER_WORKER_VERSION=v0.5.1
-    - LARGE_IMAGE_VERSION=master
+    - LARGE_IMAGE_VERSION=2.x-maintenance
     - main_path=$PWD
     - build_path=$PWD/build
     - Histogram_PATH=$TRAVIS_BUILD_DIR
