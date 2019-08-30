@@ -42,10 +42,10 @@ $(function () {
     var itemId, histogramId;
 
     describe('Test the histogram plugin', function () {
-        it('create the admin user', function () {
-            girderTest.createUser(
-                'admin', 'admin@email.com', 'Admin', 'Admin', 'testpassword')();
-        });
+        // it('create the admin user', function () {
+        //     girderTest.createUser(
+        //         'admin', 'admin@email.com', 'Admin', 'Admin', 'testpassword')();
+        // });
 
         it('goes to histogram plugin settings', _goToHistogramPluginSettings);
 
