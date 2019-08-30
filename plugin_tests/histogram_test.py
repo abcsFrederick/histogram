@@ -142,13 +142,19 @@ class HistogramTest(base.TestCase):
         from girder.plugins.histogram.models.histogram import Histogram
 
         file, item = self._uploadFile('plugins/large_image/plugin_tests/test_files/test_L_8.png')
+        print file,item
         token = Token().createToken(self.admin)
+        print self.admin
+        print token
         doc = Histogram().createHistogramJob(item, file, user=self.admin,
                                              token=token, **kwargs)
-
+        print doc
         complete = (JobStatus.SUCCESS, JobStatus.ERROR, JobStatus.CANCELED)
         starttime = time.time()
         while True:
+            print 'assertTrue'
+            print time.time()
+            print starttime
             self.assertTrue(time.time() - starttime < 30)
             job = Job().load(doc['_id'], user=self.admin, exc=True)
             if job.get('status') in complete:
