@@ -159,7 +159,7 @@ class HistogramTest(base.TestCase):
             print 'assertTrue'
             print time.time()
             print starttime
-            # self.assertTrue(time.time() - starttime < 30)
+            self.assertTrue(time.time() - starttime < 30)
             job = Job().load(doc['_id'], user=self.admin, exc=True)
             print '-------job status-------'
             print job.get('status')

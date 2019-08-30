@@ -81,8 +81,7 @@ before_install:
     - girder_worker_path=$girder_path/plugins/girder_worker
     - git clone https://github.com/girder/girder_worker.git $girder_worker_path && git -C $girder_worker_path checkout $GIRDER_WORKER_VERSION
     - cp $PWD/plugin_tests/girder_worker.cfg $girder_worker_path/girder_worker/worker.local.cfg
-    - sudo pip2 install --no-cache-dir -U setuptools && 
-      sudo pip2 install --no-cache-dir -U $girder_worker_path'[girder_io]'
+    - pip install --no-cache-dir -U --upgrade-strategy eager $girder_worker_path'[girder_io]'
 
     - large_image_path=$girder_path/plugins/large_image
     - git clone https://github.com/girder/large_image.git $large_image_path && git -C $large_image_path checkout $LARGE_IMAGE_VERSION
@@ -124,7 +123,7 @@ install:
 script:
     - mkdir -p $build_path/girder_testing_build
     - cd $girder_worker_path
-    - python2 -m girder_worker >/tmp/worker.out 2>&1 &
+    - python2 -m girder_worker
     - cd $build_path/girder_testing_build
     - cmake -DPYTHON_VERSION:STRING=${TRAVIS_PYTHON_VERSION} -DRUN_CORE_TESTS:BOOL="OFF" -DTEST_PLUGINS:STRING="histogram" $girder_path
     - make -j 5
