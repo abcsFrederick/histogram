@@ -1,7 +1,7 @@
 girderTest.importPlugin('jobs');
 girderTest.importPlugin('worker');
-girderTest.importPlugin('large_image');
-girderTest.importPlugin('histogram');
+// girderTest.importPlugin('large_image');
+// girderTest.importPlugin('histogram');
 girderTest.startApp();
 
 function _goToHistogramPluginSettings() {
