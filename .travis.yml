@@ -104,6 +104,7 @@ install:
     - pip install -U -r requirements-dev.txt
     - pip install -U -e .[worker]
 
+    - girder --version
     - cd $large_image_path
     - pip install --no-cache-dir 'numpy>=1.12.1'
     - pip install --upgrade --no-cache-dir --force-reinstall --ignore-installed openslide-python Pillow
