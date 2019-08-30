@@ -42,10 +42,26 @@ $(function () {
     var itemId, histogramId;
 
     describe('Test the histogram plugin', function () {
-        // it('create the admin user', function () {
-        //     girderTest.createUser(
-        //         'admin', 'admin@email.com', 'Admin', 'Admin', 'testpassword')();
-        // });
+        it('create the admin user', function () {
+            // girderTest.createUser(
+            //     'admin', 'admin@email.com', 'Admin', 'Admin', 'testpassword')();
+            waitsFor(function () {
+                return $('.g-register').length > 0;
+            }, 'Girder app to render');
+
+            runs(function () {
+                $('.g-register').click();
+            });
+
+            waitsFor(function () {
+                console.log($('.modal').data('bs.modal'));
+                console.log($('.modal').data('bs.modal').isShown);
+                console.log($('#g-dialog-container:visible').length);
+                return $('.modal').data('bs.modal') &&
+                    $('.modal').data('bs.modal').isShown === true &&
+                    $('#g-dialog-container:visible').length > 0;
+            }, 'a dialog to fully render' + desc);
+        });
 
         it('goes to histogram plugin settings', _goToHistogramPluginSettings);
 
