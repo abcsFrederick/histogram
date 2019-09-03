@@ -17,6 +17,14 @@ compiler:
     - gcc
 
 addons:
+    artifacts:
+        debug: true
+        paths:
+          - build/test/artifacts
+        target_paths: $TRAVIS_BUILD_NUMBER
+        working_dir: WORKING_DIR
+        bucket: traviscioutput
+        s3_region: us-east-1
     apt:
         packages:
             # Pillow dependencies (see
