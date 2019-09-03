@@ -93,6 +93,7 @@ before_install:
 
     - large_image_path=$girder_path/plugins/large_image
     - git clone https://github.com/girder/large_image.git $large_image_path && git -C $large_image_path checkout $LARGE_IMAGE_VERSION
+    - ls -l $girder_path/plugins/large_image
 
     - export MONGO_VERSION=3.4.19
     - export PY_COVG="ON"

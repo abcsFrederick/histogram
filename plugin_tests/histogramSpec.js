@@ -54,7 +54,7 @@ $(function () {
             });
 
             waitsFor(function () {
-                console.log(window.girder.plugins.large_image);
+                console.log($.fn.jquery);
                 console.log('-------------modal-------------');
                 console.log($('.modal'));
                 console.log('-------------modal bs.modal-------------');
