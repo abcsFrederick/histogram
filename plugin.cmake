@@ -16,4 +16,6 @@ add_web_client_test(
   histogram_test
   "${CMAKE_CURRENT_LIST_DIR}/plugin_tests/histogramSpec.js"
   PLUGIN histogram
+  TEST_MODULE "plugin_tests.web_client_test"
+  TEST_PYTHONPATH "${CMAKE_CURRENT_LIST_DIR}"
 )

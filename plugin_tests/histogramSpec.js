@@ -38,13 +38,15 @@ function _goToHistogramPluginSettings() {
     }, 'rest requests to finish');
 }
 
+
 $(function () {
     var itemId, histogramId;
 
     describe('Test the histogram plugin', function () {
         it('create the admin user', function () {
-            girderTest.createUser(
-                'admin', 'admin@email.com', 'Admin', 'Admin', 'testpassword')();
+            girderTest.login('admin', 'Admin', 'Admin', 'password')();
+            // girderTest.createUser(
+            //     'admin', 'admin@email.com', 'Admin', 'Admin', 'testpassword')();
             // waitsFor(function () {
             //     return $('.g-register').length > 0;
             // }, 'Girder app to render');
