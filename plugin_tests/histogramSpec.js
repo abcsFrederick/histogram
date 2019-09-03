@@ -65,7 +65,7 @@ $(function () {
                 return $('.modal').data('bs.modal') &&
                     $('.modal').data('bs.modal').isShown === true &&
                     $('#g-dialog-container:visible').length > 0;
-            }, 'a dialog to fully render' + desc);
+            }, 'a dialog to fully render');
         });
 
         it('goes to histogram plugin settings', _goToHistogramPluginSettings);

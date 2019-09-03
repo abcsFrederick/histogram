@@ -22,6 +22,7 @@ addons:
         paths:
           - /home/travis/build/cj-abcs/histogram/build/girder/build/test/artifacts
         target_paths: $TRAVIS_BUILD_NUMBER
+        working_dir: err_artifacts
         bucket: traviscioutput
         s3_region: us-east-1
     apt:
