@@ -16,10 +16,6 @@ services:
 compiler:
     - gcc
 
-env:
-    - ARTIFACTS_KEY=AKIAI67ZRH5QIQZ2JROA
-    - ARTIFACTS_SECRET=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
-    - ARTIFACTS_BUCKET=traviscioutput
 addons:
     artifacts:
         debug: true
