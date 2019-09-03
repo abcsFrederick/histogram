@@ -176,7 +176,7 @@ before_install:
 
     - girder_worker_path=$girder_path/plugins/girder_worker
     - git clone https://github.com/girder/girder_worker.git $girder_worker_path && git -C $girder_worker_path checkout $GIRDER_WORKER_VERSION
-    - cp $PWD/plugin_tests/girder_worker.cfg $girder_worker_path/girder_worker/worker.local.cfg
+    - cp $PWD/plugin_tests/test_files/girder_worker.cfg $girder_worker_path/girder_worker/worker.local.cfg
     - pip install --no-cache-dir -U --upgrade-strategy eager $girder_worker_path'[girder_io]'
 
     - large_image_path=$girder_path/plugins/large_image
