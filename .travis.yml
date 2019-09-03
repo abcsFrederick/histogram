@@ -212,7 +212,7 @@ install:
     - cd $main_path
     - pip install -r requirements.txt
     # something forget
-    - pip install -e .
+    # - pip install -e .
 
     - cd $girder_path
     - npm-install-retry
