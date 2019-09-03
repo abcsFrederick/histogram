@@ -43,26 +43,27 @@ $(function () {
 
     describe('Test the histogram plugin', function () {
         it('create the admin user', function () {
-            // girderTest.createUser(
-            //     'admin', 'admin@email.com', 'Admin', 'Admin', 'testpassword')();
-            waitsFor(function () {
-                return $('.g-register').length > 0;
-            }, 'Girder app to render');
+            girderTest.createUser(
+                'admin', 'admin@email.com', 'Admin', 'Admin', 'testpassword')();
+            // waitsFor(function () {
+            //     return $('.g-register').length > 0;
+            // }, 'Girder app to render');
 
-            runs(function () {
-                $('.g-register').click();
-            });
+            // runs(function () {
+            //     console.log(JSON.stringify($('.g-register')));
+            //     $('.g-register').click();
+            // });
 
-            waitsFor(function () {
-                console.log($.fn.jquery);
-                console.log('-------------modal-------------');
-                console.log($('.modal'));
-                console.log('-------------modal bs.modal-------------');
-                console.log($('.modal').data('bs.modal'));
-                return $('.modal').data('bs.modal') &&
-                    $('.modal').data('bs.modal').isShown === true &&
-                    $('#g-dialog-container:visible').length > 0;
-            }, 'a dialog to fully render');
+            // waitsFor(function () {
+            //     // console.log($.fn.jquery);
+            //     console.log('-------------modal-------------');
+            //     console.log(JSON.stringify($('.modal')));
+            //     console.log('-------------modal bs.modal-------------');
+            //     console.log($('.modal').data('bs.modal'));
+            //     return $('.modal').data('bs.modal') &&
+            //         $('.modal').data('bs.modal').isShown === true &&
+            //         $('#g-dialog-container:visible').length > 0;
+            // }, 'a dialog to fully render');
         });
 
         it('goes to histogram plugin settings', _goToHistogramPluginSettings);

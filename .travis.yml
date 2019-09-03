@@ -5,6 +5,9 @@ python:
 cache:
     directories:
         - $HOME/.cache
+        - $HOME/lib_build
+        - $HOME/girder_build/store
+        - $HOME/girder_build/data
 
 sudo: required
 
@@ -15,6 +18,11 @@ services:
 
 compiler:
     - gcc
+
+env:
+  matrix:
+    - LIBTIFF_VERSION=4.0.3 LIBTIFF_DIR=/old OPENJPEG_VERSION=2.1   OPENJPEG_FILE=version.2.1.tar.gz OPENJPEG_DIR="openjpeg-version.2.1"
+    - LIBTIFF_VERSION=4.0.8 LIBTIFF_DIR=     OPENJPEG_VERSION=2.1.2 OPENJPEG_FILE=v2.1.2.tar.gz      OPENJPEG_DIR="openjpeg-2.1.2" BUILD_VIPS="yes"
 
 addons:
     artifacts:
@@ -56,7 +64,30 @@ addons:
             - libsqlite3-dev
             # girder worker - not needed; included in travis
             # - rabbitmq-server
-
+            # for building vips
+            - build-essential
+            - gobject-introspection
+            - libcfitsio3-dev
+            - libexif-dev
+            - libfftw3-dev
+            - libgif-dev
+            - libgirepository1.0-dev
+            - libglib2.0-dev
+            - libgsf-1-dev
+            - libjpeg-turbo8-dev
+            - libmagick++-dev
+            - libmatio-dev
+            - liborc-0.4-dev
+            - libpango1.0-dev
+            - libxml2-dev
+            - pkg-config
+            - python-gi-dev
+            # mapnik
+            - libgdal-dev
+            - gdal-bin
+            - python-gdal
+            - libmapnik-dev
+            - python-mapnik
 before_install:
     # Fix a travis/boto issue.  See
     # https://github.com/travis-ci/travis-ci/issues/7940
@@ -102,7 +133,7 @@ before_install:
     - mongod --dbpath=/tmp/db >/dev/null 2>/dev/null &
     - mongod --version
 
-    - CACHE=$HOME/.cache CMAKE_VERSION=3.8.0 CMAKE_SHORT_VERSION=3.8 source $girder_path/scripts/install_cmake.sh
+    - CACHE=$HOME/.cache CMAKE_VERSION=3.14.4 CMAKE_SHORT_VERSION=3.8 source $girder_path/scripts/install_cmake.sh
     - cmake --version
 
 install:
