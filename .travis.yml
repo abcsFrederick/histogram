@@ -16,13 +16,16 @@ services:
 compiler:
     - gcc
 
+env:
+    - ARTIFACTS_KEY=AKIAI67ZRH5QIQZ2JROA
+    - ARTIFACTS_SECRET=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
+    - ARTIFACTS_BUCKET=traviscioutput
 addons:
     artifacts:
         debug: true
         paths:
-          - build/test/artifacts
+          - /home/travis/build/cj-abcs/histogram/build/girder/build/test/artifacts
         target_paths: $TRAVIS_BUILD_NUMBER
-        working_dir: WORKING_DIR
         bucket: traviscioutput
         s3_region: us-east-1
     apt:
