@@ -19,10 +19,10 @@ services:
 compiler:
     - gcc
 
-env:
-  matrix:
-    - LIBTIFF_VERSION=4.0.3 LIBTIFF_DIR=/old OPENJPEG_VERSION=2.1   OPENJPEG_FILE=version.2.1.tar.gz OPENJPEG_DIR="openjpeg-version.2.1"
-    - LIBTIFF_VERSION=4.0.8 LIBTIFF_DIR=     OPENJPEG_VERSION=2.1.2 OPENJPEG_FILE=v2.1.2.tar.gz      OPENJPEG_DIR="openjpeg-2.1.2" BUILD_VIPS="yes"
+# env:
+#   matrix:
+#     - LIBTIFF_VERSION=4.0.3 LIBTIFF_DIR=/old OPENJPEG_VERSION=2.1   OPENJPEG_FILE=version.2.1.tar.gz OPENJPEG_DIR="openjpeg-version.2.1"
+#     - LIBTIFF_VERSION=4.0.8 LIBTIFF_DIR=     OPENJPEG_VERSION=2.1.2 OPENJPEG_FILE=v2.1.2.tar.gz      OPENJPEG_DIR="openjpeg-2.1.2" BUILD_VIPS="yes"
 
 addons:
     artifacts:
@@ -65,38 +65,40 @@ addons:
             # girder worker - not needed; included in travis
             # - rabbitmq-server
             # for building vips
-            - build-essential
-            - gobject-introspection
-            - libcfitsio3-dev
-            - libexif-dev
-            - libfftw3-dev
-            - libgif-dev
-            - libgirepository1.0-dev
-            - libglib2.0-dev
-            - libgsf-1-dev
-            - libjpeg-turbo8-dev
-            - libmagick++-dev
-            - libmatio-dev
-            - liborc-0.4-dev
-            - libpango1.0-dev
-            - libxml2-dev
-            - pkg-config
-            - python-gi-dev
+            # - build-essential
+            # - gobject-introspection
+            # - libcfitsio3-dev
+            # - libexif-dev
+            # - libfftw3-dev
+            # - libgif-dev
+            # - libgirepository1.0-dev
+            # - libglib2.0-dev
+            # - libgsf-1-dev
+            # - libjpeg-turbo8-dev
+            # - libmagick++-dev
+            # - libmatio-dev
+            # - liborc-0.4-dev
+            # - libpango1.0-dev
+            # - libxml2-dev
+            # - pkg-config
+            # - python-gi-dev
             # mapnik
-            - libgdal-dev
-            - gdal-bin
-            - python-gdal
-            - libmapnik-dev
-            - python-mapnik
+            # - libgdal-dev
+            # - gdal-bin
+            # - python-gdal
+            # - libmapnik-dev
+            # - python-mapnik
 before_install:
     # Fix a travis/boto issue.  See
     # https://github.com/travis-ci/travis-ci/issues/7940
     - sudo rm -f /etc/boto.cfg
 
+    - pip install -U pip
+
     - mkdir -p $HOME/.cache/node_modules || true
     - ln -sf $HOME/.cache/node_modules .
     - nvm install v8
-    - npm install -g npm
+    - npm install -g npm@6.10.3
     - npm install -g npm-install-retry
     - npm --version
     - npm prune
@@ -105,70 +107,70 @@ before_install:
     - GIRDER_WORKER_VERSION=v0.5.1
     - LARGE_IMAGE_VERSION=2.x-maintenance
     - main_path=$PWD
-    - build_path=$PWD/build
-    - Histogram_PATH=$TRAVIS_BUILD_DIR
+    - build_path=$HOME/build
+    # - Histogram_PATH=$TRAVIS_BUILD_DIR
     - mkdir -p $build_path
-    - lib_build_path=$HOME/lib_build
+    # - lib_build_path=$HOME/lib_build
 
-    - mkdir -p $lib_build_path
+    # - mkdir -p $lib_build_path
     # There is an issue with the OpenJPEG library included with Ubuntu 14.04,
     # so install it from source.
-    - if [[ ! -d $OPENJPEG_DIR ]]; then
-        wget -O "openjpeg-$OPENJPEG_VERSION.tar.gz" "https://github.com/uclouvain/openjpeg/archive/$OPENJPEG_FILE" &&
-        tar -zxpf "openjpeg-$OPENJPEG_VERSION.tar.gz" ;
-      fi
-    - cd "$OPENJPEG_DIR"
-    - cmake .
-    - make -j 3
-    - sudo make install
-    - sudo ldconfig
+    # - if [[ ! -d $OPENJPEG_DIR ]]; then
+    #     wget -O "openjpeg-$OPENJPEG_VERSION.tar.gz" "https://github.com/uclouvain/openjpeg/archive/$OPENJPEG_FILE" &&
+    #     tar -zxpf "openjpeg-$OPENJPEG_VERSION.tar.gz" ;
+    #   fi
+    # - cd "$OPENJPEG_DIR"
+    # - cmake .
+    # - make -j 3
+    # - sudo make install
+    # - sudo ldconfig
 
     # Build libtiff so it will use our openjpeg
-    - cd $lib_build_path
-    - if [[ ! -d "tiff-$LIBTIFF_VERSION" ]]; then
-        wget -O "tiff-$LIBTIFF_VERSION.tar.gz" "http://download.osgeo.org/libtiff$LIBTIFF_DIR/tiff-$LIBTIFF_VERSION.tar.gz" &&
-        tar -zxpf "tiff-$LIBTIFF_VERSION.tar.gz" ;
-      fi
-    - cd "tiff-$LIBTIFF_VERSION"
-    - ./configure
-    - make -j 3
-    - sudo make install
-    - sudo ldconfig
+    # - cd $lib_build_path
+    # - if [[ ! -d "tiff-$LIBTIFF_VERSION" ]]; then
+    #     wget -O "tiff-$LIBTIFF_VERSION.tar.gz" "http://download.osgeo.org/libtiff$LIBTIFF_DIR/tiff-$LIBTIFF_VERSION.tar.gz" &&
+    #     tar -zxpf "tiff-$LIBTIFF_VERSION.tar.gz" ;
+    #   fi
+    # - cd "tiff-$LIBTIFF_VERSION"
+    # - ./configure
+    # - make -j 3
+    # - sudo make install
+    # - sudo ldconfig
 
     # Build OpenSlide ourselves so that it will use our libtiff
-    - cd $lib_build_path
-    - if [[ ! -d openslide-3.4.1 ]]; then
-        wget -O openslide-3.4.1.tar.gz https://github.com/openslide/openslide/archive/v3.4.1.tar.gz &&
-        tar -zxpf openslide-3.4.1.tar.gz ;
-      fi
-    - cd openslide-3.4.1
-    - autoreconf -i
-    - ./configure
-    - make -j 3
-    - sudo make install
-    - sudo ldconfig
+    # - cd $lib_build_path
+    # - if [[ ! -d openslide-3.4.1 ]]; then
+    #     wget -O openslide-3.4.1.tar.gz https://github.com/openslide/openslide/archive/v3.4.1.tar.gz &&
+    #     tar -zxpf openslide-3.4.1.tar.gz ;
+    #   fi
+    # - cd openslide-3.4.1
+    # - autoreconf -i
+    # - ./configure
+    # - make -j 3
+    # - sudo make install
+    # - sudo ldconfig
 
     # Build vips to use our libraries
-    - if [ "$BUILD_VIPS" = "yes" ]; then
-        cd $lib_build_path &&
-        if [ ! -f vips-8.7.0/config.status ]; then
-          if [[ ! -d vips-8.7.0 ]]; then
-            wget -O vips-8.7.0.tar.gz https://github.com/libvips/libvips/releases/download/v8.7.0/vips-8.7.0.tar.gz &&
-            tar -zxpf vips-8.7.0.tar.gz ;
-          fi &&
-          cd vips-8.7.0 &&
-          ./configure &&
-          make -j 3 >/tmp/vips_build.txt ;
-        else
-          cd vips-8.7.0 ;
-        fi &&
-        sudo make install &&
-        sudo ldconfig ;
-      fi
-    - vips --version
-    # - CACHE="$HOME/.cache" OPENJPEG_VERSION=2.1.2 OPENJPEG_FILE=v2.1.2.tar.gz OPENJPEG_DIR=openjpeg-2.1.2 LIBTIFF_VERSION=4.0.8 OPENSLIDE_VERSION=3.4.1 source .install-openslide.sh
+    # - if [ "$BUILD_VIPS" = "yes" ]; then
+    #     cd $lib_build_path &&
+    #     if [ ! -f vips-8.7.0/config.status ]; then
+    #       if [[ ! -d vips-8.7.0 ]]; then
+    #         wget -O vips-8.7.0.tar.gz https://github.com/libvips/libvips/releases/download/v8.7.0/vips-8.7.0.tar.gz &&
+    #         tar -zxpf vips-8.7.0.tar.gz ;
+    #       fi &&
+    #       cd vips-8.7.0 &&
+    #       ./configure &&
+    #       make -j 3 >/tmp/vips_build.txt ;
+    #     else
+    #       cd vips-8.7.0 ;
+    #     fi &&
+    #     sudo make install &&
+    #     sudo ldconfig ;
+    #   fi
+    # - vips --version
+    - CACHE="$HOME/.cache" OPENJPEG_VERSION=2.1.2 OPENJPEG_FILE=v2.1.2.tar.gz OPENJPEG_DIR=openjpeg-2.1.2 LIBTIFF_VERSION=4.0.8 OPENSLIDE_VERSION=3.4.1 source .install-openslide.sh
 
-    - girder_path=$build_path/girder
+    - girder_path=$HOME/girder
     - rm -fr $girder_path
     - git clone https://github.com/girder/girder.git $girder_path && git -C $girder_path checkout $GIRDER_VERSION
     - ln -sf $main_path $girder_path/plugins/
@@ -176,15 +178,13 @@ before_install:
 
     - large_image_path=$girder_path/plugins/large_image
     - git clone https://github.com/girder/large_image.git $large_image_path && git -C $large_image_path checkout $LARGE_IMAGE_VERSION
-    - ls -l $girder_path/plugins/large_image
 
-    - cd $large_image_path
-
-    - girder_worker_path=$girder_path/plugins/girder_worker
+    - girder_worker_path=$HOME/girder_worker
     - git clone https://github.com/girder/girder_worker.git $girder_worker_path && git -C $girder_worker_path checkout $GIRDER_WORKER_VERSION
-    - cp $PWD/plugin_tests/test_files/girder_worker.cfg $girder_worker_path/girder_worker/worker.local.cfg
-    - pip install --no-cache-dir -U --upgrade-strategy eager $girder_worker_path'[girder_io]'
-
+    - cp $PWD/plugin_tests/data/girder_worker.cfg $girder_worker_path/girder_worker/worker.local.cfg
+    # - pip install --no-cache-dir -U --upgrade-strategy eager $girder_worker_path'[girder_io]'
+    - pip install --no-cache-dir -U $girder_worker_path'[girder_io,docker]' ;
+    
     - export MONGO_VERSION=3.4.19
     - export PY_COVG="ON"
     - CACHE=$HOME/.cache source $girder_path/scripts/install_mongo.sh
@@ -192,14 +192,14 @@ before_install:
     - mongod --dbpath=/tmp/db >/dev/null 2>/dev/null &
     - mongod --version
 
-    - CACHE=$HOME/.cache CMAKE_VERSION=3.14.4 CMAKE_SHORT_VERSION=3.8 source $girder_path/scripts/install_cmake.sh
+    - CACHE=$HOME/.cache CMAKE_VERSION=3.8.0 CMAKE_SHORT_VERSION=3.8 source $girder_path/scripts/install_cmake.sh
     - cmake --version
 
 install:
     - cd $girder_path
-    # - pip install -U --upgrade-strategy eager -r requirements-dev.txt
+    - pip install -U --upgrade-strategy eager -r requirements-dev.txt
     # - pip install -U --upgrade-strategy eager -e .[worker]
-    - pip install -U -r requirements-dev.txt
+    # - pip install -U -r requirements-dev.txt
     - pip install -U -e .[worker]
 
     - girder --version
@@ -211,7 +211,8 @@ install:
     - python setup.py install
     - cd $main_path
     - pip install -r requirements.txt
-    # - pip install -e .
+    # something forget
+    - pip install -e .
 
     - cd $girder_path
     - npm-install-retry
@@ -220,11 +221,11 @@ install:
     - pip freeze  # report what we have installed
 
 script:
-    - mkdir -p $build_path/girder_testing_build
+    - mkdir -p $build_path
     - cd $girder_worker_path
     - python2 -m girder_worker >/tmp/worker.out 2>&1 &
-    - cd $build_path/girder_testing_build
-    - cmake -DPYTHON_VERSION:STRING=${TRAVIS_PYTHON_VERSION} -DRUN_CORE_TESTS:BOOL="OFF" -DTEST_PLUGINS:STRING="histogram" $girder_path
+    - cd $build_path
+    - cmake -DPYTHON_COVERAGE:BOOL=${PY_COVG} -DPYTHON_EXECUTABLE:FILEPATH="`which python`" -DPYTHON_VERSION:STRING=${TRAVIS_PYTHON_VERSION} -DRUN_CORE_TESTS:BOOL="OFF" -DTEST_PLUGINS:STRING="histogram" $girder_path
     - make -j 5
     - JASMINE_TIMEOUT=15000 ctest -VV -j 3
     # - travis-sphinx build --source=$main_path/docs
