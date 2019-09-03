@@ -54,14 +54,11 @@ $(function () {
             });
 
             waitsFor(function () {
+            //     console.log(window.girder.plugins.large_image);
                 console.log('-------------modal-------------');
                 console.log($('.modal'));
                 console.log('-------------modal bs.modal-------------');
                 console.log($('.modal').data('bs.modal'));
-                console.log('-------------modal bs.modal isShown-------------');
-                console.log($('.modal').data('bs.modal').isShown);
-                console.log('-------------length-------------');
-                console.log($('#g-dialog-container:visible').length);
                 return $('.modal').data('bs.modal') &&
                     $('.modal').data('bs.modal').isShown === true &&
                     $('#g-dialog-container:visible').length > 0;
