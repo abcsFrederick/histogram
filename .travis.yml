@@ -101,6 +101,15 @@ before_install:
     - npm --version
     - npm prune
 
+    - GIRDER_VERSION=2.x-maintenance
+    - GIRDER_WORKER_VERSION=v0.5.1
+    - LARGE_IMAGE_VERSION=2.x-maintenance
+    - main_path=$PWD
+    - build_path=$PWD/build
+    - Histogram_PATH=$TRAVIS_BUILD_DIR
+    - mkdir -p $build_path
+    - lib_build_path=$HOME/lib_build
+
     - mkdir -p $lib_build_path
     # There is an issue with the OpenJPEG library included with Ubuntu 14.04,
     # so install it from source.
@@ -158,15 +167,6 @@ before_install:
       fi
     - vips --version
     # - CACHE="$HOME/.cache" OPENJPEG_VERSION=2.1.2 OPENJPEG_FILE=v2.1.2.tar.gz OPENJPEG_DIR=openjpeg-2.1.2 LIBTIFF_VERSION=4.0.8 OPENSLIDE_VERSION=3.4.1 source .install-openslide.sh
-
-    - GIRDER_VERSION=2.x-maintenance
-    - GIRDER_WORKER_VERSION=v0.5.1
-    - LARGE_IMAGE_VERSION=2.x-maintenance
-    - main_path=$PWD
-    - build_path=$PWD/build
-    - Histogram_PATH=$TRAVIS_BUILD_DIR
-    - mkdir -p $build_path
-    - lib_build_path=$HOME/lib_build
 
     - girder_path=$build_path/girder
     - rm -fr $girder_path
