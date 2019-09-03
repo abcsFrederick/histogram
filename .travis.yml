@@ -28,7 +28,7 @@ addons:
     artifacts:
         debug: true
         paths:
-          - /home/travis/build/cj-abcs/histogram/build/girder/build/test/artifacts
+          - /home/travis
         target_paths: $TRAVIS_BUILD_NUMBER
         working_dir: err_artifacts
         bucket: traviscioutput
