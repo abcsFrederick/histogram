@@ -122,8 +122,9 @@ $(function () {
                     });
                 });
                 waitsFor(function () {
+                    console.log(job);
                     return job !== undefined;
-                });
+                }, 'job is created');
                 waitsFor(function () {
                     var fetched = false;
                     job.fetch().then(function (resp) {
@@ -134,7 +135,7 @@ $(function () {
                         return fetched;
                     });
                     return job.get('status') !== undefined && girder.plugins.jobs.JobStatus.finished(job.get('status'));
-                });
+                }, 'job is finished');
                 runs(function () {
                     expect(job.get('status')).toBe(girder.plugins.jobs.JobStatus.SUCCESS);
                     girder.rest.restRequest({
@@ -152,7 +153,7 @@ $(function () {
                 });
                 waitsFor(function () {
                     return histogramId !== undefined;
-                });
+                }, 'histogramId is created');
             });
             it('view test histogram', function () {
                 runs(function () {
