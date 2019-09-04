@@ -29,6 +29,7 @@ addons:
         debug: true
         paths:
           - /home/travis/girder/build/test/artifacts/
+          - /tmp/worker.out
         target_paths: $TRAVIS_BUILD_NUMBER
         working_dir: err_artifacts
         bucket: traviscioutput
