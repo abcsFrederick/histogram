@@ -122,7 +122,6 @@ $(function () {
                     });
                 });
                 waitsFor(function () {
-                    console.log(job);
                     return job !== undefined;
                 }, 'job is created');
                 waitsFor(function () {
@@ -134,6 +133,7 @@ $(function () {
                     waitsFor(function () {
                         return fetched;
                     });
+                    console.log(job.get('status'));
                     return job.get('status') !== undefined && girder.plugins.jobs.JobStatus.finished(job.get('status'));
                 }, 'job is finished');
                 runs(function () {
