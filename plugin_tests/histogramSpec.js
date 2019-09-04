@@ -38,7 +38,6 @@ function _goToHistogramPluginSettings() {
     }, 'rest requests to finish');
 }
 
-
 $(function () {
     var itemId, histogramId;
 
