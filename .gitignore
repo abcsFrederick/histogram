@@ -7,3 +7,4 @@ env
 dist
 build
 histogram.egg-info
+artifacts

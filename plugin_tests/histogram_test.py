@@ -142,7 +142,9 @@ class HistogramTest(base.TestCase):
         from girder.plugins.histogram.models.histogram import Histogram
 
         file, item = self._uploadFile('plugins/large_image/plugin_tests/test_files/test_L_8.png')
+
         token = Token().createToken(self.admin)
+
         doc = Histogram().createHistogramJob(item, file, user=self.admin,
                                              token=token, **kwargs)
 
