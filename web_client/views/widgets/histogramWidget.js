@@ -73,6 +73,10 @@ var HistogramWidget = View.extend({
                 method: 'GET',
                 error: null
             }).done((resp) => {
+                // dev server resp as string for some reason
+                if (typeof(resp) === 'string') {
+                    resp = JSON.parse(resp);
+                }
                 this.histogram = resp;
                 this.status = null;
                 this.render();
