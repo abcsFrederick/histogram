@@ -29,8 +29,8 @@ from girder.models.model_base import AccessControlledModel
 from girder.models.file import File
 from girder.models.setting import Setting
 
-from girder.plugins.jobs.models.job import Job
-from girder.plugins.worker import utils
+from girder_jobs.models.job import Job
+from girder_worker.girder_plugin import utils
 
 from ..constants import PluginSettings
 
@@ -127,7 +127,6 @@ class Histogram(AccessControlledModel):
                 'data': bitmask,
             },
         }
-
         reference = json.dumps({'jobId': str(job['_id']), 'isHistogram': True})
         outputs = {
             'histogram': utils.girderOutputSpec(item, token,

@@ -26,19 +26,21 @@ import json
 
 from bson.objectid import ObjectId
 
+from girder import plugin
 from girder import events, logger
-from girder.constants import SettingDefault
+from girder.settings import SettingDefault
 from girder.exceptions import ValidationException
 from girder.models.item import Item
 from girder.models.notification import Notification
 from girder.utility import setting_utilities
 
-from girder.plugins.jobs.constants import JobStatus
-from girder.plugins.jobs.models.job import Job
+from girder_jobs.constants import JobStatus
+from girder_jobs.models.job import Job
 
 from .constants import PluginSettings
 from .rest import HistogramResource
 from .models.histogram import Histogram
+from girder.utility.model_importer import ModelImporter
 
 
 def _onRemoveItem(event):
@@ -195,13 +197,16 @@ SettingDefault.defaults.update({
     PluginSettings.DEFAULT_BINS: 256,
 })
 
+class HistogramPlugin(plugin.GirderPlugin):
+    DISPLAY_NAME = 'Histogram'
+    CLIENT_SOURCE_PATH = 'web_client'
+    def load(self, info):
+        ModelImporter.registerModel('histogram', Histogram, 'histogram')
+        info['apiRoot'].histogram = HistogramResource()
 
-def load(info):
-    info['apiRoot'].histogram = HistogramResource()
-
-    events.bind('model.item.remove', info['name'], _onRemoveItem)
-    events.bind('model.file.remove', info['name'], _onRemoveFile)
-    events.bind('data.process', info['name'], _onUpload)
-    events.bind('jobs.job.update.after', info['name'], _updateJob)
-    events.bind('model.job.save', info['name'], _updateJob)
-    events.bind('model.job.remove', info['name'], _updateJob)
+        events.bind('model.item.remove', 'Histogram', _onRemoveItem)
+        events.bind('model.file.remove', 'Histogram', _onRemoveFile)
+        events.bind('data.process', 'Histogram', _onUpload)
+        events.bind('jobs.job.update.after', 'Histogram', _updateJob)
+        events.bind('model.job.save', 'Histogram', _updateJob)
+        events.bind('model.job.remove', 'Histogram', _updateJob)

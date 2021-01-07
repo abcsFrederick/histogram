@@ -31,6 +31,7 @@ from girder.exceptions import RestException
 from girder.models.file import File
 from girder.models.item import Item
 from girder.models.setting import Setting
+# from girder_jobs.models.job import Job
 
 from .constants import PluginSettings
 from .models.histogram import Histogram
@@ -96,7 +97,7 @@ class HistogramResource(Resource):
         ))
 
     @access.user(scope=TokenScope.DATA_WRITE)
-    @filtermodel(model='job', plugin='jobs')
+    # @filtermodel(model='job', plugin='jobs')
     @autoDescribeRoute(
         Description('Create a new histogram from an item.')
         .modelParam('itemId', 'The ID of the source item.',
@@ -116,7 +117,6 @@ class HistogramResource(Resource):
     def createHistogram(self, item, fileId, notify, bins, label, bitmask):
         user = self.getCurrentUser()
         token = self.getCurrentToken()
-
         if fileId is None:
             # files = list(Item().childFiles(item=item, limit=2))
             query = {

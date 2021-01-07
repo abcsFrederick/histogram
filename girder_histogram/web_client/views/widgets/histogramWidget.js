@@ -1,9 +1,9 @@
 import _ from 'underscore';
 
-import eventStream from 'girder/utilities/EventStream';
-import View from 'girder/views/View';
-import events from 'girder/events';
-import { restRequest } from 'girder/rest';
+import eventStream from '@girder/core/utilities/EventStream';
+import View from '@girder/core/views/View';
+import events from '@girder/core/events';
+import { restRequest } from '@girder/core/rest';
 
 import histogramWidget from '../../templates/widgets/histogramWidget.pug';
 import '../../stylesheets/widgets/histogramWidget.styl';

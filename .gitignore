@@ -7,5 +7,5 @@ _build
 env
 dist
 build
-histogram.egg-info
+*.egg-info
 artifacts

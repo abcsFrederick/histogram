@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import View from 'girder/views/View';
+import View from '@girder/core/views/View';
 
 import rangeSliderWidget from '../../templates/widgets/rangeSliderWidget.pug';
 import '../../stylesheets/widgets/rangeSliderWidget.styl';
