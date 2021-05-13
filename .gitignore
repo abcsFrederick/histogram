@@ -1,3 +1,4 @@
+.DS_Store
 *.py[cod]
 node_modules
 _build
@@ -6,5 +7,5 @@ _build
 env
 dist
 build
-histogram.egg-info
+*.egg-info
 artifacts

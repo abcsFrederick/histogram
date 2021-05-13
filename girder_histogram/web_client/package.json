@@ -1,0 +1,19 @@
+{
+    "name": "@girder/histogram",
+    "version": "0.1.0",
+    "description": "Create, serve, and display histograms.",
+    "homepage": "https://github.com/abcsFrederick/histogram",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/abcsFrederick/histogram"
+    },
+    "peerDependencies": {
+        "@girder/core": "*"
+    },
+    "main": "./index.js",
+    "girderPlugin": {
+        "name": "histogram",
+        "main": "./main.js"
+    }
+}

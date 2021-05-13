@@ -29,9 +29,11 @@ def computeHistogram(in_path, label, bins, bitmask):
         import PIL.Image
         PIL.Image.MAX_IMAGE_PIXELS = 10000000000
         image = PIL.Image.open(in_path)
+        print 'use pil'
     except (ImportError, IOError, OSError):
         import pytiff
         image = pytiff.Tiff(in_path)
+        print 'use pytiff'
     else:
         if image.mode not in ('1', 'L', 'P', 'I', 'F'):
             raise ValueError('invalid image type for histogram: %s' % image.mode)
@@ -59,6 +61,7 @@ def computeHistogram(in_path, label, bins, bitmask):
     else:
         hist, binEdges = numpy.histogram(array, bins=_bins)
 
+    print hist
     return hist, binEdges
 
 

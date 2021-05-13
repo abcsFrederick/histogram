@@ -31,6 +31,7 @@ from girder.exceptions import RestException
 from girder.models.file import File
 from girder.models.item import Item
 from girder.models.setting import Setting
+# from girder_jobs.models.job import Job
 
 from .constants import PluginSettings
 from .models.histogram import Histogram
@@ -96,7 +97,7 @@ class HistogramResource(Resource):
         ))
 
     @access.user(scope=TokenScope.DATA_WRITE)
-    @filtermodel(model='job', plugin='jobs')
+    # @filtermodel(model='job', plugin='jobs')
     @autoDescribeRoute(
         Description('Create a new histogram from an item.')
         .modelParam('itemId', 'The ID of the source item.',
@@ -116,22 +117,23 @@ class HistogramResource(Resource):
     def createHistogram(self, item, fileId, notify, bins, label, bitmask):
         user = self.getCurrentUser()
         token = self.getCurrentToken()
-
         if fileId is None:
             # files = list(Item().childFiles(item=item, limit=2))
             query = {
                 'itemId': item['_id'],
-                '$or': [{'mimeType': {'$regex': '^image/'}},
-                        {'mimeType': 'application/octet-stream'}],
+                'mimeType': {'$regex': '^image/tiff'}
+                # query should find the same file(tiff) used for creating histogram
+                # but this will always find most recent json histogram
+                # '$or': [{'mimeType': {'$regex': '^image/'}},
+                #         {'mimeType': 'application/octet-stream'}],
             }
             files = list(File().find(query, limit=2))
-            if len(files) == 1:
+            if len(files) >= 1:
                 fileId = str(files[0]['_id'])
         if not fileId:
             raise RestException('Missing "fileId" parameter.')
 
         file_ = File().load(fileId, user=user, level=AccessType.READ, exc=True)
-
         return self.histogram.createHistogramJob(item, file_, user=user,
                                                  token=token, notify=notify,
                                                  bins=bins, label=label,

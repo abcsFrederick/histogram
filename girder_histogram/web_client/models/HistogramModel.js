@@ -1,4 +1,4 @@
-import Model from 'girder/models/Model';
+import Model from '@girder/core/models/Model';
 
 var HistogramModel = Model.extend({
     resourceName: 'histogram',
