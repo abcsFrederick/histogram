@@ -23,6 +23,8 @@
 
 import json
 import os.path
+import uuid
+
 
 from girder.constants import AccessType
 from girder.models.model_base import AccessControlledModel
@@ -33,6 +35,9 @@ from girder_jobs.models.job import Job
 from girder_worker.girder_plugin import utils
 
 from ..constants import PluginSettings
+
+from girder_worker_utils.transforms.girder_io import GirderFileId, GirderUploadToItem
+from histogram.histogram import histogram as histogramExecutor
 
 
 class Histogram(AccessControlledModel):
@@ -64,107 +69,134 @@ class Histogram(AccessControlledModel):
             bins = Setting().get(PluginSettings.DEFAULT_BINS)
         if file_['itemId'] != item['_id']:
             raise ValueError('The file must be in the item.')
-
-        path = os.path.join(os.path.dirname(__file__), '../../histogramScript/',
-                            'create_histogram.py')
-        with open(path, 'r') as f:
-            script = f.read()
-
-        title = 'Histogram computation for item %s' % item['_id']
-        job = Job().createJob(title=title, type='histogram',
-                              handler='worker_handler', user=user)
-        jobToken = Job().createJobToken(job)
-
-        task = {
-            'mode': 'python',
-            'script': script,
-            'name': title,
-            'inputs': [{
-                'id': 'in_path',
-                'target': 'filepath',
-                'type': 'string',
-                'format': 'text'
-            }, {
-                'id': 'bins',
-                'type': 'number',
-                'format': 'number',
-            }, {
-                'id': 'label',
-                'type': 'boolean',
-                'format': 'boolean',
-            }, {
-                'id': 'bitmask',
-                'type': 'boolean',
-                'format': 'boolean',
-            }],
-            'outputs': [{
-                'id': 'histogram',
-                'target': 'memory',
-                'type': 'string',
-                'format': 'text',
-            }],
+        girder_job_title = 'Histogram computation for item %s' % item['_id']
+        girder_job_type = 'histogram'
+        fakeId = uuid.uuid4().hex
+        other_fields = {
+            'meta' : {
+                'creator': 'histogram',
+                'task': 'createHistogram',
+                'fakeId': fakeId,
+            }
         }
-
-        inputs = {
-            'in_path': utils.girderInputSpec(
-                file_, resourceType='file', token=token),
-            'bins': {
-                'mode': 'inline',
-                'type': 'number',
-                'format': 'number',
-                'data': bins,
-            },
-            'label': {
-                'mode': 'inline',
-                'type': 'boolean',
-                'format': 'boolean',
-                'data': label,
-            },
-            'bitmask': {
-                'mode': 'inline',
-                'type': 'boolean',
-                'format': 'boolean',
-                'data': bitmask,
-            },
-        }
-        reference = json.dumps({'jobId': str(job['_id']), 'isHistogram': True})
-        outputs = {
-            'histogram': utils.girderOutputSpec(item, token,
-                                                parentType='item',
-                                                name='histogram.json',
-                                                reference=reference),
-        }
-
-        job['kwargs'] = {
-            'task': task,
-            'inputs': inputs,
-            'outputs': outputs,
-            'jobInfo': utils.jobInfoSpec(job, jobToken),
-            'auto_convert': True,
-            'validate': True,
-        }
-
-        job['meta'] = {
-            'creator': 'histogram',
-            'task': 'createHistogram',
-        }
-
-        job = Job().save(job)
-
+        reference = json.dumps({'isHistogram': True, 'fakeId': fakeId})
+        result = histogramExecutor.delay(GirderFileId(str(file_['_id'])), label, bins, bitmask,
+                                         girder_job_title=girder_job_title, girder_job_type=girder_job_type,
+                                         girder_job_other_fields=other_fields,
+                                         girder_result_hooks=[GirderUploadToItem(str(item['_id']), delete_file=True,
+                                         upload_kwargs={'reference': reference})])
         histogram = {
             'expected': True,
-            'notify': notify,
+            'notify': True,
             'itemId': item['_id'],
             'bins': bins,
             'label': label,
             'bitmask': bitmask,
-            'jobId': job['_id'],
+            # 'jobId': result.job['_id'],
+            'fakeId': fakeId
         }
         self.save(histogram)
+        return result.job
+        # path = os.path.join(os.path.dirname(__file__), '../../histogramScript/',
+        #                     'create_histogram.py')
+        # with open(path, 'r') as f:
+        #     script = f.read()
 
-        Job().scheduleJob(job)
+        # title = 'Histogram computation for item %s' % item['_id']
+        # job = Job().createJob(title=title, type='histogram',
+        #                       handler='worker_handler', user=user)
+        # jobToken = Job().createJobToken(job)
 
-        return job
+        # task = {
+        #     'mode': 'python',
+        #     'script': script,
+        #     'name': title,
+        #     'inputs': [{
+        #         'id': 'in_path',
+        #         'target': 'filepath',
+        #         'type': 'string',
+        #         'format': 'text'
+        #     }, {
+        #         'id': 'bins',
+        #         'type': 'number',
+        #         'format': 'number',
+        #     }, {
+        #         'id': 'label',
+        #         'type': 'boolean',
+        #         'format': 'boolean',
+        #     }, {
+        #         'id': 'bitmask',
+        #         'type': 'boolean',
+        #         'format': 'boolean',
+        #     }],
+        #     'outputs': [{
+        #         'id': 'histogram',
+        #         'target': 'memory',
+        #         'type': 'string',
+        #         'format': 'text',
+        #     }],
+        # }
+
+        # inputs = {
+        #     'in_path': utils.girderInputSpec(
+        #         file_, resourceType='file', token=token),
+        #     'bins': {
+        #         'mode': 'inline',
+        #         'type': 'number',
+        #         'format': 'number',
+        #         'data': bins,
+        #     },
+        #     'label': {
+        #         'mode': 'inline',
+        #         'type': 'boolean',
+        #         'format': 'boolean',
+        #         'data': label,
+        #     },
+        #     'bitmask': {
+        #         'mode': 'inline',
+        #         'type': 'boolean',
+        #         'format': 'boolean',
+        #         'data': bitmask,
+        #     },
+        # }
+        # reference = json.dumps({'jobId': str(job['_id']), 'isHistogram': True})
+        # outputs = {
+        #     'histogram': utils.girderOutputSpec(item, token,
+        #                                         parentType='item',
+        #                                         name='histogram.json',
+        #                                         reference=reference),
+        # }
+
+        # job['kwargs'] = {
+        #     'task': task,
+        #     'inputs': inputs,
+        #     'outputs': outputs,
+        #     'jobInfo': utils.jobInfoSpec(job, jobToken),
+        #     'auto_convert': True,
+        #     'validate': True,
+        # }
+
+        # job['meta'] = {
+        #     'creator': 'histogram',
+        #     'task': 'createHistogram',
+        # }
+
+        # job = Job().save(job)
+
+        # histogram = {
+        #     'expected': True,
+        #     'notify': notify,
+        #     'itemId': item['_id'],
+        #     'bins': bins,
+        #     'label': label,
+        #     'bitmask': bitmask,
+        #     'jobId': job['_id'],
+        # }
+        # self.save(histogram)
+
+        # Job().scheduleJob(job)
+
+        # return job
 
     def validate(self, histogram):
         return histogram

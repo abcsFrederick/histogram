@@ -92,20 +92,21 @@ def _onUpload(event):
         return
 
     if ref.get('isHistogram'):
-        jobId = ref.get('jobId')
-        if not jobId:
-            msg = 'Histogram file %s uploaded without jobId reference.'
+        # jobId = ref.get('jobId')
+        fakeId = ref.get('fakeId')
+        if not fakeId:
+            msg = 'Histogram file %s uploaded without fakeId reference.'
             logger.warning(msg % file_['_id'])
             return
-        histograms = list(Histogram().find({'jobId': ObjectId(jobId)}, limit=2))
+        histograms = list(Histogram().find({'fakeId': fakeId}, limit=2))
         if len(histograms) == 1:
             histogram = histograms[0]
             del histogram['expected']
             histogram['fileId'] = file_['_id']
             Histogram().save(histogram)
         else:
-            msg = 'Failed to retrieve histogram for file %s using jobId %s.'
-            logger.warning(msg % (file_['_id'], jobId))
+            msg = 'Failed to retrieve histogram for file %s using fakeId %s.'
+            logger.warning(msg % (file_['_id'], fakeId))
             return
     elif isinstance(ref.get('histogram'), dict):
         item = Item().load(file_['itemId'], force=True)
@@ -132,10 +133,10 @@ def _updateJob(event):
         status = JobStatus.CANCELED
     if status not in (JobStatus.ERROR, JobStatus.CANCELED, JobStatus.SUCCESS):
         return
-    histograms = list(Histogram().find({'jobId': job['_id']}, limit=2))
+    histograms = list(Histogram().find({'fakeId': meta.get('fakeId')}, limit=2))
     if len(histograms) != 1:
-        msg = 'Failed to retrieve histogram using jobId %s.'
-        logger.warning(msg % job['_id'])
+        msg = 'Failed to retrieve histogram using fakeId %s.'
+        logger.warning(msg % meta.get('fakeId'))
         return
     histogram = histograms[0]
     if histogram.get('expected'):

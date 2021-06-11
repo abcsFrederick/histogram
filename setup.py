@@ -5,7 +5,8 @@ with open('README.rst') as readme_file:
 
 requirements = [
     'large_image',
-    'pytiff'
+    'pytiff',
+    'girder-worker-utils'
 ]
 
 setup(
