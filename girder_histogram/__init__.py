@@ -169,7 +169,7 @@ def _updateJob(event):
                 'histogram_id': histogram['_id'],
                 'item_id': histogram['itemId'],
                 'file_id': histogram['fileId'],
-                'job_id': histogram['jobId'],
+                'fakeId': histogram['fakeId'],
                 'success': status == JobStatus.SUCCESS,
                 'status': status
             },
