@@ -97,7 +97,8 @@ class HistogramResource(Resource):
         ))
 
     @access.user(scope=TokenScope.DATA_WRITE)
-    @filtermodel(model='job', plugin='jobs')
+    # @filtermodel(model='job', plugin='jobs')
+    @filtermodel(Histogram)
     @autoDescribeRoute(
         Description('Create a new histogram from an item.')
         .modelParam('itemId', 'The ID of the source item.',

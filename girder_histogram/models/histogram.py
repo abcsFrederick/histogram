@@ -96,7 +96,7 @@ class Histogram(AccessControlledModel):
             'fakeId': fakeId
         }
         self.save(histogram)
-        return result.job
+        return histogram
         # path = os.path.join(os.path.dirname(__file__), '../../histogramScript/',
         #                     'create_histogram.py')
         # with open(path, 'r') as f:
