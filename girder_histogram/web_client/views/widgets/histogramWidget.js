@@ -35,6 +35,11 @@ var HistogramWidget = View.extend({
             this._getHistogram
         );
 
+        this.listenTo(
+            eventStream,
+            'g:eventStream.start',
+            this._getHistogram
+        );
         this._getHistogram();
 
         View.prototype.initialize.apply(this, arguments);
