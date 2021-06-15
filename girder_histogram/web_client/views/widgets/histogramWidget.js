@@ -9,6 +9,7 @@ import histogramWidget from '../../templates/widgets/histogramWidget.pug';
 import '../../stylesheets/widgets/histogramWidget.styl';
 import RangeSliderWidget from './rangeSliderWidget';
 
+const {log} = console;
 var HistogramWidget = View.extend({
     events: {
         'click .g-histogram-bar': '_onHistogramBar'
@@ -99,9 +100,10 @@ var HistogramWidget = View.extend({
      * the histogram data.
      */
     _getHistogram: function () {
+        log(this)
         this.status = 'loading';
         this.render();
-        if (!this.model.get('_id')) {
+        if (!this.model.get('fileId')) {
             this.status = 'loading';
             this.render();
             return;
