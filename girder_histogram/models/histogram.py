@@ -43,14 +43,14 @@ from histogram.histogram import histogram as histogramExecutor
 class Histogram(AccessControlledModel):
     def initialize(self):
         self.name = 'histogram'
-        self.ensureIndices(['itemId', 'jobId', 'fileId'])
+        self.ensureIndices(['itemId', 'fakeId', 'fileId'])
         self.exposeFields(AccessType.READ, (
             '_id',
             'itemId',  # computed histogram of this item
             'bins',
             'label',
             'bitmask',
-            'jobId',
+            'fakeId',
             'fileId',  # file containing computed histogram
         ))
 

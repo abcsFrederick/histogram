@@ -97,11 +97,11 @@ var RangeSliderWidget = View.extend({
         var parentOffset = this.$el.offset().left;
         var parentWidth = this.$el.width();
         var sliderWidth = this.$el.height();
-        if (this.label) {
-            this.barWidth = parentWidth / (this.binEdges.length - 1);
-        } else {
-            this.barWidth = parentWidth / this.binEdges.length;
-        }
+        // if (this.label) {
+        this.barWidth = parentWidth / (this.binEdges.length - 1);
+        // } else {
+        //     this.barWidth = parentWidth / this.binEdges.length;
+        // }
 
         this.sliderRange = {
             min: parentOffset - sliderWidth,
