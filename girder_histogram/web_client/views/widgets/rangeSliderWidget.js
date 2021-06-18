@@ -12,6 +12,7 @@ var RangeSliderWidget = View.extend({
     initialize: function (settings) {
         this.binEdges = settings.binEdges;
         this.hist = settings.hist;
+        this.label = settings.label;
         this.range = settings.range;
         return View.prototype.initialize.apply(this, arguments);
     },
@@ -96,7 +97,11 @@ var RangeSliderWidget = View.extend({
         var parentOffset = this.$el.offset().left;
         var parentWidth = this.$el.width();
         var sliderWidth = this.$el.height();
-        this.barWidth = parentWidth / this.binEdges.length;
+        if (this.label) {
+            this.barWidth = parentWidth / (this.binEdges.length - 1);
+        } else {
+            this.barWidth = parentWidth / this.binEdges.length;
+        }
 
         this.sliderRange = {
             min: parentOffset - sliderWidth,
@@ -119,6 +124,7 @@ var RangeSliderWidget = View.extend({
         var sliderOffset = {min: this.sliderRange.min, max: this.sliderRange.max};
         sliderOffset.min += this.bins.min * this.barWidth;
         sliderOffset.max -= (this.hist.length - this.bins.max - 1) * this.barWidth;
+        console.log(sliderOffset)
         this.$('.min-range-slider').offset({left: sliderOffset.min});
         this.$('.max-range-slider').offset({left: sliderOffset.max});
 
