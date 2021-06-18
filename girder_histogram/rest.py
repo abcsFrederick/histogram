@@ -122,11 +122,12 @@ class HistogramResource(Resource):
             # files = list(Item().childFiles(item=item, limit=2))
             query = {
                 'itemId': item['_id'],
-                'mimeType': {'$regex': '^image/tiff'}
+                # 'mimeType': {'$regex': '^image/tiff'}
                 # query should find the same file(tiff) used for creating histogram
                 # but this will always find most recent json histogram
-                # '$or': [{'mimeType': {'$regex': '^image/'}},
-                #         {'mimeType': 'application/octet-stream'}],
+                '$or': [{'mimeType': {'$regex': '^image/'}},
+                        {'mimeType': 'application/octet-stream'},
+                        {'exts': ['tif']}],
             }
             files = list(File().find(query, limit=2))
             if len(files) >= 1:

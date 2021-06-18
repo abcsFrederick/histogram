@@ -124,7 +124,7 @@ var RangeSliderWidget = View.extend({
         var sliderOffset = {min: this.sliderRange.min, max: this.sliderRange.max};
         sliderOffset.min += this.bins.min * this.barWidth;
         sliderOffset.max -= (this.hist.length - this.bins.max - 1) * this.barWidth;
-        console.log(sliderOffset)
+
         this.$('.min-range-slider').offset({left: sliderOffset.min});
         this.$('.max-range-slider').offset({left: sliderOffset.max});
 
